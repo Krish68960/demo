@@ -1,7 +1,7 @@
 {
   "name": "novatrade-demo",
-  "version": "1.0.0",
-  "description": "NovaTrade demo trading simulator",
+  "version": "2.0.0",
+  "description": "NovaTrade demo trading simulator with admin approval",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
