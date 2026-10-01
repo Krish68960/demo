@@ -14,32 +14,38 @@ const DATABASE_URL =
     process.env.DATABASE_URL;
 
 
-/*
-=========================================================
-DATABASE
-=========================================================
-*/
+/* =====================================================
+   DATABASE
+===================================================== */
 
 if (!DATABASE_URL) {
-    console.error("DATABASE_URL environment variable is missing.");
+
+    console.error(
+        "DATABASE_URL environment variable is missing."
+    );
+
     process.exit(1);
 }
 
+
 const pool = new Pool({
+
     connectionString: DATABASE_URL,
+
     ssl: {
         rejectUnauthorized: false
     }
+
 });
 
 
-/*
-=========================================================
-EXPRESS
-=========================================================
-*/
+/* =====================================================
+   EXPRESS
+===================================================== */
 
-app.use(express.json());
+app.use(
+    express.json()
+);
 
 app.use(
     express.urlencoded({
@@ -49,20 +55,44 @@ app.use(
 
 app.use(
     express.static(
-        path.join(__dirname, "public")
+        path.join(
+            __dirname,
+            "public"
+        )
     )
 );
 
 
-/*
-=========================================================
-DATABASE INITIALIZATION
-=========================================================
-*/
+/* =====================================================
+   ALLOWED MARKETS
+===================================================== */
+
+const ALLOWED_MARKETS = [
+
+    "ETHUSDT",
+    "SOLUSDT",
+    "POLUSDT",
+    "TRXUSDT"
+
+];
+
+
+const ALLOWED_DIRECTIONS = [
+
+    "CALL",
+    "PUT"
+
+];
+
+
+/* =====================================================
+   DATABASE INITIALIZATION
+===================================================== */
 
 async function initializeDatabase() {
 
     await pool.query(`
+
         CREATE TABLE IF NOT EXISTS trades (
 
             id UUID PRIMARY KEY,
@@ -73,72 +103,158 @@ async function initializeDatabase() {
 
             amount NUMERIC(18,2) NOT NULL,
 
-            status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
+            status VARCHAR(30) NOT NULL
+                DEFAULT 'PENDING_APPROVAL',
 
             resolution_source VARCHAR(20),
 
-            created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+            created_at TIMESTAMPTZ NOT NULL
+                DEFAULT NOW(),
 
-            expires_at TIMESTAMPTZ NOT NULL,
+            approval_expires_at TIMESTAMPTZ NOT NULL,
+
+            approved_at TIMESTAMPTZ,
+
+            trade_expires_at TIMESTAMPTZ,
 
             resolved_at TIMESTAMPTZ,
 
             start_price NUMERIC(30,12),
 
-            demo_return NUMERIC(18,2) DEFAULT 0,
+            demo_return NUMERIC(18,2)
+                DEFAULT 0,
 
-            demo_profit NUMERIC(18,2) DEFAULT 0
+            demo_profit NUMERIC(18,2)
+                DEFAULT 0
 
         );
+
+    `);
+
+
+    /*
+     * If the table already existed from your
+     * previous version, add the new columns.
+     */
+
+    await pool.query(`
+
+        ALTER TABLE trades
+
+        ADD COLUMN IF NOT EXISTS
+        approval_expires_at
+        TIMESTAMPTZ;
+
     `);
 
 
     await pool.query(`
+
+        ALTER TABLE trades
+
+        ADD COLUMN IF NOT EXISTS
+        approved_at
+        TIMESTAMPTZ;
+
+    `);
+
+
+    await pool.query(`
+
+        ALTER TABLE trades
+
+        ADD COLUMN IF NOT EXISTS
+        trade_expires_at
+        TIMESTAMPTZ;
+
+    `);
+
+
+    await pool.query(`
+
+        ALTER TABLE trades
+
+        ADD COLUMN IF NOT EXISTS
+        resolution_source
+        VARCHAR(20);
+
+    `);
+
+
+    await pool.query(`
+
+        ALTER TABLE trades
+
+        ADD COLUMN IF NOT EXISTS
+        demo_return
+        NUMERIC(18,2)
+        DEFAULT 0;
+
+    `);
+
+
+    await pool.query(`
+
+        ALTER TABLE trades
+
+        ADD COLUMN IF NOT EXISTS
+        demo_profit
+        NUMERIC(18,2)
+        DEFAULT 0;
+
+    `);
+
+
+    await pool.query(`
+
         CREATE INDEX IF NOT EXISTS
         trades_status_idx
         ON trades(status);
+
     `);
 
 
     await pool.query(`
+
         CREATE INDEX IF NOT EXISTS
         trades_created_at_idx
         ON trades(created_at DESC);
+
     `);
 
 
     console.log(
         "Database initialized."
     );
-}
-
-
-/*
-=========================================================
-UTILITY
-=========================================================
-*/
-
-function generateId() {
-
-    return crypto.randomUUID();
 
 }
 
 
-function calculateReturn(
+/* =====================================================
+   PAYOUT CALCULATION
+===================================================== */
+
+function calculatePayout(
     amount,
     status
 ) {
 
-    amount = Number(amount);
+    amount =
+        Number(amount);
 
-    if (status !== "WIN") {
+
+    if (
+        status !== "WIN"
+    ) {
 
         return {
+
             totalReturn: 0,
+
             profit: 0,
+
             multiplier: 0
+
         };
 
     }
@@ -159,52 +275,85 @@ function calculateReturn(
 
 
     return {
+
         totalReturn,
+
         profit,
+
         multiplier
+
     };
 
 }
 
 
-/*
-=========================================================
-VALIDATION
-=========================================================
-*/
+/* =====================================================
+   ADMIN AUTH
+===================================================== */
 
-const ALLOWED_MARKETS = [
-    "ETHUSDT",
-    "SOLUSDT",
-    "POLUSDT",
-    "TRXUSDT"
-];
+function adminAuth(
+    req,
+    res,
+    next
+) {
 
-const ALLOWED_DIRECTIONS = [
-    "CALL",
-    "PUT"
-];
+    const password =
+        req.headers[
+            "x-admin-password"
+        ];
 
 
-/*
-=========================================================
-CREATE DEMO TRADE
-=========================================================
-*/
+    if (
+        !password ||
+        password !== ADMIN_PASSWORD
+    ) {
+
+        return res
+            .status(401)
+            .json({
+
+                error:
+                    "Unauthorized."
+
+            });
+
+    }
+
+
+    next();
+
+}
+
+
+/* =====================================================
+   CREATE DEMO TRADE
+===================================================== */
 
 app.post(
     "/api/trades",
-    async (req, res) => {
+    async (
+        req,
+        res
+    ) => {
 
         try {
 
             const {
+
                 market,
+
                 direction,
+
                 amount,
+
                 startPrice
+
             } = req.body;
 
+
+            /*
+             * Validate market.
+             */
 
             if (
                 !ALLOWED_MARKETS.includes(
@@ -212,12 +361,21 @@ app.post(
                 )
             ) {
 
-                return res.status(400).json({
-                    error: "Invalid market."
-                });
+                return res
+                    .status(400)
+                    .json({
+
+                        error:
+                            "Invalid market."
+
+                    });
 
             }
 
+
+            /*
+             * Validate direction.
+             */
 
             if (
                 !ALLOWED_DIRECTIONS.includes(
@@ -225,9 +383,14 @@ app.post(
                 )
             ) {
 
-                return res.status(400).json({
-                    error: "Invalid direction."
-                });
+                return res
+                    .status(400)
+                    .json({
+
+                        error:
+                            "Invalid direction."
+
+                    });
 
             }
 
@@ -243,79 +406,132 @@ app.post(
                 numericAmount <= 0
             ) {
 
-                return res.status(400).json({
-                    error: "Invalid demo amount."
-                });
+                return res
+                    .status(400)
+                    .json({
+
+                        error:
+                            "Invalid demo amount."
+
+                    });
 
             }
 
 
             /*
-             * This is a demo system.
-             * There is intentionally no payment
-             * or wallet verification.
+             * Create a new trade.
              */
 
             const id =
-                generateId();
+                crypto.randomUUID();
 
 
             const createdAt =
                 new Date();
 
 
-            const expiresAt =
+            /*
+             * ADMIN APPROVAL WINDOW
+             *
+             * The admin has 60 seconds
+             * to approve the request.
+             */
+
+            const approvalExpiresAt =
                 new Date(
+
                     createdAt.getTime() +
+
                     60 * 1000
+
                 );
 
 
             const result =
                 await pool.query(
+
                     `
+
                     INSERT INTO trades
+
                     (
+
                         id,
+
                         market,
+
                         direction,
+
                         amount,
+
                         status,
+
                         created_at,
-                        expires_at,
+
+                        approval_expires_at,
+
                         start_price
+
                     )
+
                     VALUES
+
                     (
+
                         $1,
+
                         $2,
+
                         $3,
+
                         $4,
-                        'PENDING',
+
+                        'PENDING_APPROVAL',
+
                         $5,
+
                         $6,
+
                         $7
+
                     )
+
                     RETURNING *
+
                     `,
+
                     [
+
                         id,
+
                         market,
+
                         direction,
+
                         numericAmount,
+
                         createdAt,
-                        expiresAt,
+
+                        approvalExpiresAt,
+
                         startPrice || null
+
                     ]
+
                 );
 
 
             res.json({
+
                 success: true,
-                trade: result.rows[0]
+
+                trade:
+                    result.rows[0]
+
             });
 
         }
+
         catch (error) {
 
             console.error(
@@ -324,9 +540,14 @@ app.post(
             );
 
 
-            res.status(500).json({
-                error: "Unable to create demo trade."
-            });
+            res
+                .status(500)
+                .json({
+
+                    error:
+                        "Unable to create demo trade."
+
+                });
 
         }
 
@@ -334,28 +555,38 @@ app.post(
 );
 
 
-/*
-=========================================================
-GET TRADE
-=========================================================
-*/
+/* =====================================================
+   GET SINGLE TRADE
+===================================================== */
 
 app.get(
     "/api/trades/:id",
-    async (req, res) => {
+    async (
+        req,
+        res
+    ) => {
 
         try {
 
             const result =
                 await pool.query(
+
                     `
+
                     SELECT *
+
                     FROM trades
+
                     WHERE id = $1
+
                     `,
+
                     [
+
                         req.params.id
+
                     ]
+
                 );
 
 
@@ -363,19 +594,29 @@ app.get(
                 result.rows.length === 0
             ) {
 
-                return res.status(404).json({
-                    error: "Trade not found."
-                });
+                return res
+                    .status(404)
+                    .json({
+
+                        error:
+                            "Trade not found."
+
+                    });
 
             }
 
 
             res.json({
+
                 success: true,
-                trade: result.rows[0]
+
+                trade:
+                    result.rows[0]
+
             });
 
         }
+
         catch (error) {
 
             console.error(
@@ -383,9 +624,14 @@ app.get(
             );
 
 
-            res.status(500).json({
-                error: "Unable to retrieve trade."
-            });
+            res
+                .status(500)
+                .json({
+
+                    error:
+                        "Unable to retrieve trade."
+
+                });
 
         }
 
@@ -393,48 +639,16 @@ app.get(
 );
 
 
-/*
-=========================================================
-ADMIN AUTHENTICATION
-=========================================================
-*/
-
-function adminAuth(
-    req,
-    res,
-    next
-) {
-
-    const password =
-        req.headers["x-admin-password"];
-
-
-    if (
-        !password ||
-        password !== ADMIN_PASSWORD
-    ) {
-
-        return res.status(401).json({
-            error: "Unauthorized."
-        });
-
-    }
-
-
-    next();
-
-}
-
-
-/*
-=========================================================
-ADMIN LOGIN CHECK
-=========================================================
-*/
+/* =====================================================
+   ADMIN LOGIN
+===================================================== */
 
 app.post(
     "/api/admin/login",
-    (req, res) => {
+    (
+        req,
+        res
+    ) => {
 
         const {
             password
@@ -442,55 +656,81 @@ app.post(
 
 
         if (
-            password !== ADMIN_PASSWORD
+            password !==
+            ADMIN_PASSWORD
         ) {
 
-            return res.status(401).json({
-                success: false,
-                error: "Invalid password."
-            });
+            return res
+                .status(401)
+                .json({
+
+                    success:
+                        false,
+
+                    error:
+                        "Invalid password."
+
+                });
 
         }
 
 
         res.json({
-            success: true
+
+            success:
+                true
+
         });
 
     }
 );
 
 
-/*
-=========================================================
-ADMIN GET TRADES
-=========================================================
-*/
+/* =====================================================
+   ADMIN GET ALL TRADES
+===================================================== */
 
 app.get(
     "/api/admin/trades",
     adminAuth,
-    async (req, res) => {
+    async (
+        req,
+        res
+    ) => {
 
         try {
 
             const result =
                 await pool.query(
+
                     `
+
                     SELECT *
+
                     FROM trades
-                    ORDER BY created_at DESC
+
+                    ORDER BY
+                    created_at DESC
+
                     LIMIT 200
+
                     `
+
                 );
 
 
             res.json({
-                success: true,
-                trades: result.rows
+
+                success:
+                    true,
+
+                trades:
+                    result.rows
+
             });
 
         }
+
         catch (error) {
 
             console.error(
@@ -498,9 +738,14 @@ app.get(
             );
 
 
-            res.status(500).json({
-                error: "Unable to retrieve trades."
-            });
+            res
+                .status(500)
+                .json({
+
+                    error:
+                        "Unable to retrieve trades."
+
+                });
 
         }
 
@@ -508,59 +753,287 @@ app.get(
 );
 
 
-/*
-=========================================================
-ADMIN RESOLVE TRADE
-=========================================================
-*/
+/* =====================================================
+   ADMIN APPROVE TRADE
+===================================================== */
 
 app.post(
-    "/api/admin/trades/:id/resolve",
+    "/api/admin/trades/:id/approve",
     adminAuth,
-    async (req, res) => {
+    async (
+        req,
+        res
+    ) => {
 
         try {
 
-            const {
-                result: requestedResult
-            } = req.body;
+            /*
+             * We only approve trades that are
+             * currently waiting for approval.
+             */
 
+            const result =
+                await pool.query(
 
-            const status =
-                String(
-                    requestedResult || ""
-                ).toUpperCase();
+                    `
+
+                    UPDATE trades
+
+                    SET
+
+                        status =
+                            'ACTIVE',
+
+                        approved_at =
+                            NOW(),
+
+                        trade_expires_at =
+                            NOW() +
+                            INTERVAL '60 seconds'
+
+                    WHERE
+
+                        id = $1
+
+                    AND
+
+                        status =
+                            'PENDING_APPROVAL'
+
+                    AND
+
+                        approval_expires_at >
+                            NOW()
+
+                    RETURNING *
+
+                    `,
+
+                    [
+
+                        req.params.id
+
+                    ]
+
+                );
 
 
             if (
-                !["WIN", "LOSS"].includes(
-                    status
-                )
+                result.rows.length === 0
             ) {
 
-                return res.status(400).json({
-                    error:
-                        "Result must be WIN or LOSS."
-                });
+                return res
+                    .status(409)
+                    .json({
+
+                        error:
+                            "Trade is no longer awaiting approval or the approval window has expired."
+
+                    });
 
             }
 
 
-            /*
-             * Only pending trades can be
-             * manually resolved.
-             */
+            res.json({
+
+                success:
+                    true,
+
+                trade:
+                    result.rows[0]
+
+            });
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "APPROVE ERROR:",
+                error
+            );
+
+
+            res
+                .status(500)
+                .json({
+
+                    error:
+                        "Unable to approve trade."
+
+                });
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   ADMIN MANUAL DECLINE
+===================================================== */
+
+app.post(
+    "/api/admin/trades/:id/decline",
+    adminAuth,
+    async (
+        req,
+        res
+    ) => {
+
+        try {
+
+            const result =
+                await pool.query(
+
+                    `
+
+                    UPDATE trades
+
+                    SET
+
+                        status =
+                            'DECLINED',
+
+                        resolution_source =
+                            'ADMIN',
+
+                        resolved_at =
+                            NOW()
+
+                    WHERE
+
+                        id = $1
+
+                    AND
+
+                        status =
+                            'PENDING_APPROVAL'
+
+                    RETURNING *
+
+                    `,
+
+                    [
+
+                        req.params.id
+
+                    ]
+
+                );
+
+
+            if (
+                result.rows.length === 0
+            ) {
+
+                return res
+                    .status(409)
+                    .json({
+
+                        error:
+                            "Trade is no longer awaiting approval."
+
+                    });
+
+            }
+
+
+            res.json({
+
+                success:
+                    true,
+
+                trade:
+                    result.rows[0]
+
+            });
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "DECLINE ERROR:",
+                error
+            );
+
+
+            res
+                .status(500)
+                .json({
+
+                    error:
+                        "Unable to decline trade."
+
+                });
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   ADMIN RESOLVE ACTIVE TRADE
+===================================================== */
+
+app.post(
+    "/api/admin/trades/:id/resolve",
+    adminAuth,
+    async (
+        req,
+        res
+    ) => {
+
+        try {
+
+            const requestedResult =
+                String(
+                    req.body.result || ""
+                ).toUpperCase();
+
+
+            if (
+                ![
+                    "WIN",
+                    "LOSS"
+                ].includes(
+                    requestedResult
+                )
+            ) {
+
+                return res
+                    .status(400)
+                    .json({
+
+                        error:
+                            "Result must be WIN or LOSS."
+
+                    });
+
+            }
+
 
             const existing =
                 await pool.query(
+
                     `
+
                     SELECT *
+
                     FROM trades
+
                     WHERE id = $1
+
                     `,
+
                     [
+
                         req.params.id
+
                     ]
+
                 );
 
 
@@ -568,9 +1041,14 @@ app.post(
                 existing.rows.length === 0
             ) {
 
-                return res.status(404).json({
-                    error: "Trade not found."
-                });
+                return res
+                    .status(404)
+                    .json({
+
+                        error:
+                            "Trade not found."
+
+                    });
 
             }
 
@@ -579,66 +1057,117 @@ app.post(
                 existing.rows[0];
 
 
+            /*
+             * Only ACTIVE trades can
+             * receive a manual WIN/LOSS.
+             */
+
             if (
-                trade.status !== "PENDING"
+                trade.status !==
+                "ACTIVE"
             ) {
 
-                return res.status(409).json({
-                    error:
-                        "This trade has already been resolved."
-                });
+                return res
+                    .status(409)
+                    .json({
+
+                        error:
+                            "Only active trades can be resolved."
+
+                    });
 
             }
 
 
             const payout =
-                calculateReturn(
+                calculatePayout(
+
                     trade.amount,
-                    status
+
+                    requestedResult
+
                 );
 
 
-            const updated =
+            const result =
                 await pool.query(
+
                     `
+
                     UPDATE trades
+
                     SET
+
                         status = $1,
-                        resolution_source = 'ADMIN',
-                        resolved_at = NOW(),
-                        demo_return = $2,
-                        demo_profit = $3
-                    WHERE id = $4
-                    AND status = 'PENDING'
+
+                        resolution_source =
+                            'ADMIN',
+
+                        resolved_at =
+                            NOW(),
+
+                        demo_return =
+                            $2,
+
+                        demo_profit =
+                            $3
+
+                    WHERE
+
+                        id = $4
+
+                    AND
+
+                        status =
+                            'ACTIVE'
+
                     RETURNING *
+
                     `,
+
                     [
-                        status,
+
+                        requestedResult,
+
                         payout.totalReturn,
+
                         payout.profit,
+
                         req.params.id
+
                     ]
+
                 );
 
 
             if (
-                updated.rows.length === 0
+                result.rows.length === 0
             ) {
 
-                return res.status(409).json({
-                    error:
-                        "Trade was already resolved."
-                });
+                return res
+                    .status(409)
+                    .json({
+
+                        error:
+                            "Trade was already resolved."
+
+                    });
 
             }
 
 
             res.json({
-                success: true,
-                trade: updated.rows[0]
+
+                success:
+                    true,
+
+                trade:
+                    result.rows[0]
+
             });
 
         }
+
         catch (error) {
 
             console.error(
@@ -647,10 +1176,14 @@ app.post(
             );
 
 
-            res.status(500).json({
-                error:
-                    "Unable to resolve trade."
-            });
+            res
+                .status(500)
+                .json({
+
+                    error:
+                        "Unable to resolve trade."
+
+                });
 
         }
 
@@ -658,38 +1191,123 @@ app.post(
 );
 
 
-/*
-=========================================================
-AUTOMATIC DEMO RESOLUTION
-=========================================================
-*/
+/* =====================================================
+   AUTO DECLINE UNAPPROVED TRADES
+===================================================== */
+
+async function automaticallyDeclineTrades() {
+
+    try {
+
+        const result =
+            await pool.query(
+
+                `
+
+                UPDATE trades
+
+                SET
+
+                    status =
+                        'DECLINED',
+
+                    resolution_source =
+                        'AUTO',
+
+                    resolved_at =
+                        NOW()
+
+                WHERE
+
+                    status =
+                        'PENDING_APPROVAL'
+
+                AND
+
+                    approval_expires_at <=
+                        NOW()
+
+                RETURNING id
+
+                `
+
+            );
+
+
+        if (
+            result.rows.length > 0
+        ) {
+
+            console.log(
+
+                `Automatically declined ${result.rows.length} trade(s).`
+
+            );
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "AUTO DECLINE ERROR:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   AUTO RESOLVE ACTIVE TRADES
+===================================================== */
 
 async function automaticallyResolveTrades() {
 
     try {
 
         /*
-         * Find trades whose 60 seconds have expired.
+         * Only ACTIVE trades are resolved here.
+         *
+         * PENDING_APPROVAL trades are handled
+         * separately above.
          */
 
         const result =
             await pool.query(
+
                 `
+
                 SELECT *
+
                 FROM trades
-                WHERE status = 'PENDING'
-                AND expires_at <= NOW()
+
+                WHERE
+
+                    status =
+                        'ACTIVE'
+
+                AND
+
+                    trade_expires_at <=
+                        NOW()
+
                 LIMIT 100
+
                 `
+
             );
 
 
         for (
-            const trade of result.rows
+            const trade
+            of result.rows
         ) {
 
             /*
-             * Automatic demo result.
+             * Demo-only automatic result.
              */
 
             const status =
@@ -699,40 +1317,73 @@ async function automaticallyResolveTrades() {
 
 
             const payout =
-                calculateReturn(
+                calculatePayout(
+
                     trade.amount,
+
                     status
+
                 );
 
 
             await pool.query(
+
                 `
+
                 UPDATE trades
+
                 SET
+
                     status = $1,
-                    resolution_source = 'AUTO',
-                    resolved_at = NOW(),
-                    demo_return = $2,
-                    demo_profit = $3
-                WHERE id = $4
-                AND status = 'PENDING'
+
+                    resolution_source =
+                        'AUTO',
+
+                    resolved_at =
+                        NOW(),
+
+                    demo_return =
+                        $2,
+
+                    demo_profit =
+                        $3
+
+                WHERE
+
+                    id = $4
+
+                AND
+
+                    status =
+                        'ACTIVE'
+
                 `,
+
                 [
+
                     status,
+
                     payout.totalReturn,
+
                     payout.profit,
+
                     trade.id
+
                 ]
+
             );
 
 
             console.log(
+
                 `Automatically resolved ${trade.id}: ${status}`
+
             );
 
         }
 
     }
+
     catch (error) {
 
         console.error(
@@ -745,41 +1396,54 @@ async function automaticallyResolveTrades() {
 }
 
 
-/*
-=========================================================
-HEALTH CHECK
-=========================================================
-*/
+/* =====================================================
+   HEALTH CHECK
+===================================================== */
 
 app.get(
     "/api/health",
-    (req, res) => {
+    (
+        req,
+        res
+    ) => {
 
         res.json({
-            status: "ok",
-            demo: true
+
+            status:
+                "ok",
+
+            demo:
+                true
+
         });
 
     }
 );
 
 
-/*
-=========================================================
-FRONTEND ROUTES
-=========================================================
-*/
+/* =====================================================
+   FRONTEND ROUTES
+===================================================== */
 
 app.get(
     "/",
-    (req, res) => {
+    (
+        req,
+        res
+    ) => {
 
         res.sendFile(
+
             path.join(
+
                 __dirname,
+
                 "public",
+
                 "index.html"
+
             )
+
         );
 
     }
@@ -788,25 +1452,32 @@ app.get(
 
 app.get(
     "/admin",
-    (req, res) => {
+    (
+        req,
+        res
+    ) => {
 
         res.sendFile(
+
             path.join(
+
                 __dirname,
+
                 "public",
+
                 "admin.html"
+
             )
+
         );
 
     }
 );
 
 
-/*
-=========================================================
-START SERVER
-=========================================================
-*/
+/* =====================================================
+   START SERVER
+===================================================== */
 
 async function startServer() {
 
@@ -816,34 +1487,55 @@ async function startServer() {
 
 
         /*
-         * Check expired demo trades
-         * every second.
+         * Check every second.
          */
 
         setInterval(
-            automaticallyResolveTrades,
+
+            automaticallyDeclineTrades,
+
             1000
+
+        );
+
+
+        setInterval(
+
+            automaticallyResolveTrades,
+
+            1000
+
         );
 
 
         app.listen(
+
             PORT,
+
             "0.0.0.0",
+
             () => {
 
                 console.log(
+
                     `NovaTrade demo running on port ${PORT}`
+
                 );
 
             }
+
         );
 
     }
+
     catch (error) {
 
         console.error(
+
             "SERVER START ERROR:",
+
             error
+
         );
 
         process.exit(1);
