@@ -1,1 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>
+    NovaTrade Admin
+</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#080b12;
+    color:#e8edf5;
+    min-height:100vh;
+}
+
+.header{
+    height:70px;
+    background:#0b0f17;
+    border-bottom:1px solid #1c2431;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 25px;
+}
+
+.logo{
+    font-size:22px;
+    font-weight:bold;
+}
+
+.logo span{
+    color:#4f8cff;
+}
+
+.admin-label{
+    color:#f0c75e;
+    font-size:10px;
+}
+
+.container{
+    max-width:1250px;
+    margin:auto;
+    padding:25px;
+}
+
+.login{
+    max-width:400px;
+    margin:100px auto;
+    background:#101620;
+    border:1px solid #293446;
+    border-radius:12px;
+    padding:25px;
+}
+
+.login h2{
+    margin-bottom:8px;
+}
+
+.description{
+    color:#687386;
+    font-size:11px;
+    line-height:1.5;
+    margin-bottom:20px;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    border-radius:7px;
+    border:1px solid #293446;
+    background:#0b1018;
+    color:white;
+    outline:none;
+}
+
+button{
+    cursor:pointer;
+}
+
+.login button{
+    width:100%;
+    margin-top:10px;
+    padding:12px;
+    background:#4f8cff;
+    color:white;
+    border:0;
+    border-radius:7px;
+    font-weight:bold;
+}
+
+.error{
+    color:#ff5c70;
+    font-size:11px;
+    margin-top:10px;
+}
+
+.dashboard{
+    display:none;
+}
+
+.top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.top h1{
+    font-size:21px;
+}
+
+.refresh{
+    background:#182238;
+    color:#b8c2d2;
+    border:1px solid #293446;
+    padding:9px 13px;
+    border-radius:7px;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+    margin-bottom:20px;
+}
+
+.stat{
+    background:#101620;
+    border:1px solid #202b3b;
+    border-radius:9px;
+    padding:15px;
+}
+
+.stat span{
+    display:block;
+    color:#687386;
+    font-size:10px;
+}
+
+.stat strong{
+    display:block;
+    font-size:22px;
+    margin-top:7px;
+}
+
+.table-container{
+    background:#101620;
+    border:1px solid #202b3b;
+    border-radius:9px;
+    overflow:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:950px;
+}
+
+th{
+    background:#0b1018;
+    color:#687386;
+    text-align:left;
+    font-size:10px;
+    font-weight:500;
+    padding:13px;
+}
+
+td{
+    padding:13px;
+    border-top:1px solid #18202c;
+    font-size:11px;
+}
+
+.pending{
+    color:#f0c75e;
+}
+
+.win{
+    color:#2dd4a8;
+}
+
+.loss{
+    color:#ff5c70;
+}
+
+.action{
+    display:flex;
+    gap:6px;
+}
+
+.action button{
+    border:0;
+    border-radius:5px;
+    padding:7px 12px;
+    color:white;
+    font-weight:bold;
+    font-size:10px;
+}
+
+.win-button{
+    background:#159979;
+}
+
+.loss-button{
+    background:#d94d64;
+}
+
+.disabled{
+    opacity:.35;
+    cursor:not-allowed;
+}
+
+.demo-note{
+    margin-top:18px;
+    background:#101620;
+    border:1px solid #202b3b;
+    border-radius:8px;
+    padding:13px;
+    color:#687386;
+    font-size:10px;
+    line-height:1.5;
+}
+
+@media(max-width:700px){
+
+    .stats{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header class="header">
+
+    <div class="logo">
+        Nova<span>Trade</span>
+    </div>
+
+    <div class="admin-label">
+        DEMO ADMIN PANEL
+    </div>
+
+</header>
+
+
+<!-- LOGIN -->
+
+<div
+    class="login"
+    id="loginBox"
+>
+
+    <h2>
+        Admin Login
+    </h2>
+
+    <p class="description">
+
+        Enter the demo administrator password
+        configured on the server.
+
+    </p>
+
+
+    <input
+        id="password"
+        type="password"
+        placeholder="Admin password"
+    >
+
+
+    <button
+        onclick="login()"
+    >
+        Login
+    </button>
+
+
+    <div
+        class="error"
+        id="loginError"
+    ></div>
+
+</div>
+
+
+<!-- DASHBOARD -->
+
+<div
+    class="dashboard"
+    id="dashboard"
+>
+
+<div class="container">
+
+
+    <div class="top">
+
+        <h1>
+            Trade Requests
+        </h1>
+
+        <button
+            class="refresh"
+            onclick="loadTrades()"
+        >
+            Refresh
+        </button>
+
+    </div>
+
+
+    <div class="stats">
+
+        <div class="stat">
+
+            <span>
+                TOTAL
+            </span>
+
+            <strong id="total">
+                0
+            </strong>
+
+        </div>
+
+
+        <div class="stat">
+
+            <span>
+                PENDING
+            </span>
+
+            <strong id="pending">
+                0
+            </strong>
+
+        </div>
+
+
+        <div class="stat">
+
+            <span>
+                WINS
+            </span>
+
+            <strong
+                id="wins"
+                class="win"
+            >
+                0
+            </strong>
+
+        </div>
+
+
+        <div class="stat">
+
+            <span>
+                LOSSES
+            </span>
+
+            <strong
+                id="losses"
+                class="loss"
+            >
+                0
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <div class="table-container">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        ID
+                    </th>
+
+                    <th>
+                        MARKET
+                    </th>
+
+                    <th>
+                        DIRECTION
+                    </th>
+
+                    <th>
+                        AMOUNT
+                    </th>
+
+                    <th>
+                        CREATED
+                    </th>
+
+                    <th>
+                        EXPIRES
+                    </th>
+
+                    <th>
+                        STATUS
+                    </th>
+
+                    <th>
+                        SOURCE
+                    </th>
+
+                    <th>
+                        ACTION
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody
+                id="tradeTable"
+            ></tbody>
+
+        </table>
+
+    </div>
+
+
+    <div class="demo-note">
+
+        <strong>
+            DEMO ONLY:
+        </strong>
+
+        Admin WIN/LOSS controls modify simulated
+        demo outcomes only. No real-money trading,
+        deposits or cryptocurrency transfers are
+        performed by this application.
+
+    </div>
+
+
+</div>
+
+</div>
+
+
+<script>
+
+let adminPassword =
+    "";
+
+
+let refreshTimer =
+    null;
+
+
+/* ================= LOGIN ================= */
+
+async function login(){
+
+    const password =
+        document.getElementById(
+            "password"
+        ).value;
+
+
+    if(!password){
+
+        return;
+
+    }
+
+
+    try{
+
+        const response =
+            await fetch(
+                "/api/admin/login",
+                {
+
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:JSON.stringify({
+                        password
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            document.getElementById(
+                "loginError"
+            ).textContent =
+                data.error ||
+                "Invalid password.";
+
+            return;
+
+        }
+
+
+        adminPassword =
+            password;
+
+
+        document.getElementById(
+            "loginBox"
+        ).style.display =
+            "none";
+
+
+        document.getElementById(
+            "dashboard"
+        ).style.display =
+            "block";
+
+
+        loadTrades();
+
+
+        refreshTimer =
+            setInterval(
+                loadTrades,
+                2000
+            );
+
+    }
+    catch(error){
+
+        document.getElementById(
+            "loginError"
+        ).textContent =
+            "Unable to connect to server.";
+
+    }
+
+}
+
+
+/* ================= LOAD TRADES ================= */
+
+async function loadTrades(){
+
+    if(!adminPassword){
+
+        return;
+
+    }
+
+
+    try{
+
+        const response =
+            await fetch(
+                "/api/admin/trades",
+                {
+
+                    headers:{
+                        "x-admin-password":
+                            adminPassword
+                    }
+
+                }
+            );
+
+
+        if(
+            response.status === 401
+        ){
+
+            clearInterval(
+                refreshTimer
+            );
+
+            alert(
+                "Admin authentication expired."
+            );
+
+            location.reload();
+
+            return;
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        renderTrades(
+            data.trades || []
+        );
+
+    }
+    catch(error){
+
+        console.error(
+            error
+        );
+
+    }
+
+}
+
+
+/* ================= RENDER ================= */
+
+function renderTrades(
+    trades
+){
+
+    const table =
+        document.getElementById(
+            "tradeTable"
+        );
+
+
+    table.innerHTML =
+        "";
+
+
+    let pending =
+        0;
+
+    let wins =
+        0;
+
+    let losses =
+        0;
+
+
+    trades.forEach(
+        trade => {
+
+            if(
+                trade.status === "PENDING"
+            ){
+
+                pending++;
+
+            }
+
+            if(
+                trade.status === "WIN"
+            ){
+
+                wins++;
+
+            }
+
+            if(
+                trade.status === "LOSS"
+            ){
+
+                losses++;
+
+            }
+
+
+            const row =
+                document.createElement(
+                    "tr"
+                );
+
+
+            const id =
+                String(
+                    trade.id
+                ).substring(
+                    0,
+                    8
+                );
+
+
+            const created =
+                new Date(
+                    trade.created_at
+                ).toLocaleString();
+
+
+            const expires =
+                new Date(
+                    trade.expires_at
+                ).toLocaleTimeString();
+
+
+            const statusClass =
+                trade.status === "WIN"
+                    ? "win"
+                    : trade.status === "LOSS"
+                        ? "loss"
+                        : "pending";
+
+
+            let action = "";
+
+
+            if(
+                trade.status === "PENDING"
+            ){
+
+                action = `
+
+                    <div class="action">
+
+                        <button
+                            class="win-button"
+                            onclick="resolveTrade(
+                                '${trade.id}',
+                                'WIN'
+                            )"
+                        >
+                            WIN
+                        </button>
+
+                        <button
+                            class="loss-button"
+                            onclick="resolveTrade(
+                                '${trade.id}',
+                                'LOSS'
+                            )"
+                        >
+                            LOSS
+                        </button>
+
+                    </div>
+
+                `;
+
+            }
+            else{
+
+                action = `
+                    <span
+                        style="color:#596579"
+                    >
+                        Resolved
+                    </span>
+                `;
+
+            }
+
+
+            row.innerHTML = `
+
+                <td>
+                    #${id}
+                </td>
+
+                <td>
+                    ${trade.market}
+                </td>
+
+                <td>
+                    ${trade.direction}
+                </td>
+
+                <td>
+                    $${Number(
+                        trade.amount
+                    ).toFixed(2)}
+                </td>
+
+                <td>
+                    ${created}
+                </td>
+
+                <td>
+                    ${expires}
+                </td>
+
+                <td class="${statusClass}">
+                    ${trade.status}
+                </td>
+
+                <td>
+                    ${trade.resolution_source || "—"}
+                </td>
+
+                <td>
+                    ${action}
+                </td>
+
+            `;
+
+
+            table.appendChild(
+                row
+            );
+
+        }
+    );
+
+
+    document.getElementById(
+        "total"
+    ).textContent =
+        trades.length;
+
+
+    document.getElementById(
+        "pending"
+    ).textContent =
+        pending;
+
+
+    document.getElementById(
+        "wins"
+    ).textContent =
+        wins;
+
+
+    document.getElementById(
+        "losses"
+    ).textContent =
+        losses;
+
+}
+
+
+/* ================= RESOLVE ================= */
+
+async function resolveTrade(
+    id,
+    result
+){
+
+    const confirmation =
+        confirm(
+            `Set this demo trade to ${result}?`
+        );
+
+
+    if(!confirmation){
+
+        return;
+
+    }
+
+
+    try{
+
+        const response =
+            await fetch(
+                `/api/admin/trades/${id}/resolve`,
+                {
+
+                    method:"POST",
+
+                    headers:{
+
+                        "Content-Type":
+                            "application/json",
+
+                        "x-admin-password":
+                            adminPassword
+
+                    },
+
+                    body:JSON.stringify({
+
+                        result
+
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            alert(
+                data.error ||
+                "Unable to resolve trade."
+            );
+
+            return;
+
+        }
+
+
+        loadTrades();
+
+    }
+    catch(error){
+
+        alert(
+            "Server error."
+        );
+
+    }
+
+}
+
+
+/* ================= ENTER KEY ================= */
+
+document
+    .getElementById(
+        "password"
+    )
+    .addEventListener(
+        "keydown",
+        event => {
+
+            if(
+                event.key === "Enter"
+            ){
+
+                login();
+
+            }
+
+        }
+    );
+
+</script>
+
+</body>
+
+</html>
