@@ -1003,47 +1003,52 @@ app.post(
 app.post(
     "/api/admin/trades/:id/resolve",
     requireAdmin,
-    async (
-        req,
-        res
-    ) => {
+    async (req, res) => {
 
         try {
 
             const selectedResult =
                 String(
                     req.body.result || ""
-                ).toUpperCase();
+                ).trim().toUpperCase();
+
+
+            console.log(
+                "Admin selecting result:",
+                req.params.id,
+                selectedResult
+            );
 
 
             if (
-                selectedResult !==
-                "WIN" &&
-                selectedResult !==
-                "LOSS"
+                selectedResult !== "WIN" &&
+                selectedResult !== "LOSS"
             ) {
 
-                return res
-                    .status(400)
-                    .json({
+                return res.status(400).json({
 
-                        success: false,
+                    success: false,
 
-                        error:
-                            "Result must be WIN or LOSS"
+                    error:
+                        "Result must be WIN or LOSS"
 
-                    });
+                });
 
             }
 
 
+            /*
+             * Check that the trade exists.
+             */
+
             const existing =
                 await pool.query(
                     `
-                    SELECT *
-
+                    SELECT
+                        id,
+                        status,
+                        pending_result
                     FROM trades
-
                     WHERE id = $1
                     `,
                     [
@@ -1056,16 +1061,14 @@ app.post(
                 existing.rows.length === 0
             ) {
 
-                return res
-                    .status(404)
-                    .json({
+                return res.status(404).json({
 
-                        success: false,
+                    success: false,
 
-                        error:
-                            "Trade not found"
+                    error:
+                        "Trade not found"
 
-                    });
+                });
 
             }
 
@@ -1074,34 +1077,39 @@ app.post(
                 existing.rows[0];
 
 
+            console.log(
+                "Current trade status:",
+                trade.status
+            );
+
+
+            /*
+             * Result can only be selected
+             * after administrator approved
+             * the trade.
+             */
+
             if (
-                trade.status !==
-                "ACTIVE"
+                trade.status !== "ACTIVE"
             ) {
 
-                return res
-                    .status(409)
-                    .json({
+                return res.status(409).json({
 
-                        success: false,
+                    success: false,
 
-                        error:
-                            "Only ACTIVE trades can receive a result."
+                    error:
+                        `Trade is currently ${trade.status}. ` +
+                        `Only ACTIVE trades can receive a result.`
 
-                    });
+                });
 
             }
 
 
             /*
-             * IMPORTANT:
+             * Do NOT change status to WIN/LOSS.
              *
-             * We DO NOT change status here.
-             *
-             * The trade remains ACTIVE until
-             * trade_expires_at.
-             *
-             * We only save the selected result.
+             * We only store the selected result.
              */
 
             const result =
@@ -1111,8 +1119,7 @@ app.post(
 
                     SET
 
-                        pending_result =
-                            $1,
+                        pending_result = $1,
 
                         pending_result_source =
                             'ADMIN'
@@ -1128,11 +1135,8 @@ app.post(
                     RETURNING *
                     `,
                     [
-
                         selectedResult,
-
                         req.params.id
-
                     ]
                 );
 
@@ -1141,33 +1145,33 @@ app.post(
                 result.rows.length === 0
             ) {
 
-                return res
-                    .status(409)
-                    .json({
+                return res.status(409).json({
 
-                        success: false,
+                    success: false,
 
-                        error:
-                            "Trade is no longer active."
+                    error:
+                        "Trade is no longer active."
 
-                    });
+                });
 
             }
 
 
             console.log(
-                "Result selected:",
-                req.params.id,
+                "Result successfully stored:",
                 selectedResult
             );
 
 
-            res.json({
+            return res.json({
 
                 success: true,
 
-                waitingForExpiry:
-                    true,
+                waitingForExpiry: true,
+
+                message:
+                    `Result ${selectedResult} selected. ` +
+                    `It will be revealed when the timer expires.`,
 
                 trade:
                     result.rows[0]
@@ -1179,31 +1183,38 @@ app.post(
         catch (error) {
 
             console.error(
-                "SELECT RESULT ERROR:",
+                "================================"
+            );
+
+            console.error(
+                "SELECT RESULT DATABASE ERROR"
+            );
+
+            console.error(
                 error
             );
 
+            console.error(
+                "================================"
+            );
 
-            res
-                .status(500)
-                .json({
 
-                    success: false,
+            return res.status(500).json({
 
-                    error:
-                        "Unable to select result",
+                success: false,
 
-                    details:
-                        error.message
+                error:
+                    "Unable to select result",
 
-                });
+                details:
+                    error.message
+
+            });
 
         }
 
     }
 );
-
-
 /* =========================================================
    AUTO DECLINE PENDING APPROVALS
 ========================================================= */
