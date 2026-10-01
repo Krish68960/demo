@@ -83,7 +83,9 @@ async function setupDatabase() {
 
     console.log("Setting up NovaTrade database...");
 
-
+    /*
+     * Create the table if it does not exist.
+     */
     await pool.query(`
         CREATE TABLE IF NOT EXISTS trades (
 
@@ -95,11 +97,11 @@ async function setupDatabase() {
 
             amount NUMERIC(18,2) NOT NULL,
 
-            status VARCHAR(30) NOT NULL,
+            status VARCHAR(30) NOT NULL DEFAULT 'PENDING_APPROVAL',
 
-            created_at TIMESTAMPTZ NOT NULL,
+            created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
-            approval_expires_at TIMESTAMPTZ NOT NULL,
+            approval_expires_at TIMESTAMPTZ,
 
             approved_at TIMESTAMPTZ,
 
@@ -109,11 +111,9 @@ async function setupDatabase() {
 
             start_price NUMERIC(30,12),
 
-            demo_return NUMERIC(18,2)
-                DEFAULT 0,
+            demo_return NUMERIC(18,2) DEFAULT 0,
 
-            demo_profit NUMERIC(18,2)
-                DEFAULT 0,
+            demo_profit NUMERIC(18,2) DEFAULT 0,
 
             resolution_source VARCHAR(20),
 
@@ -125,10 +125,121 @@ async function setupDatabase() {
     `);
 
 
+    /*
+     * IMPORTANT:
+     *
+     * These ALTER statements automatically add
+     * columns to an existing trades table.
+     *
+     * Therefore you do NOT need to manually
+     * enter SQL in Render.
+     */
+
+    await pool.query(`
+        ALTER TABLE trades
+        ADD COLUMN IF NOT EXISTS
+        approval_expires_at TIMESTAMPTZ;
+    `);
+
+
+    await pool.query(`
+        ALTER TABLE trades
+        ADD COLUMN IF NOT EXISTS
+        approved_at TIMESTAMPTZ;
+    `);
+
+
+    await pool.query(`
+        ALTER TABLE trades
+        ADD COLUMN IF NOT EXISTS
+        trade_expires_at TIMESTAMPTZ;
+    `);
+
+
+    await pool.query(`
+        ALTER TABLE trades
+        ADD COLUMN IF NOT EXISTS
+        resolved_at TIMESTAMPTZ;
+    `);
+
+
+    await pool.query(`
+        ALTER TABLE trades
+        ADD COLUMN IF NOT EXISTS
+        start_price NUMERIC(30,12);
+    `);
+
+
+    await pool.query(`
+        ALTER TABLE trades
+        ADD COLUMN IF NOT EXISTS
+        demo_return NUMERIC(18,2)
+        DEFAULT 0;
+    `);
+
+
+    await pool.query(`
+        ALTER TABLE trades
+        ADD COLUMN IF NOT EXISTS
+        demo_profit NUMERIC(18,2)
+        DEFAULT 0;
+    `);
+
+
+    await pool.query(`
+        ALTER TABLE trades
+        ADD COLUMN IF NOT EXISTS
+        resolution_source VARCHAR(20);
+    `);
+
+
+    await pool.query(`
+        ALTER TABLE trades
+        ADD COLUMN IF NOT EXISTS
+        pending_result VARCHAR(10);
+    `);
+
+
+    await pool.query(`
+        ALTER TABLE trades
+        ADD COLUMN IF NOT EXISTS
+        pending_result_source VARCHAR(20);
+    `);
+
+
+    /*
+     * Give old rows sensible defaults where possible.
+     */
+
+    await pool.query(`
+        UPDATE trades
+
+        SET
+            demo_return = 0
+
+        WHERE
+            demo_return IS NULL;
+    `);
+
+
+    await pool.query(`
+        UPDATE trades
+
+        SET
+            demo_profit = 0
+
+        WHERE
+            demo_profit IS NULL;
+    `);
+
+
+    /*
+     * Create indexes.
+     */
+
     await pool.query(`
         CREATE INDEX IF NOT EXISTS
         trades_status_index
-
         ON trades(status);
     `);
 
@@ -136,7 +247,6 @@ async function setupDatabase() {
     await pool.query(`
         CREATE INDEX IF NOT EXISTS
         trades_created_index
-
         ON trades(created_at DESC);
     `);
 
@@ -146,7 +256,6 @@ async function setupDatabase() {
     );
 
 }
-
 
 /* =========================================================
    PAYOUT CALCULATION
