@@ -10,263 +10,269 @@
     content="width=device-width, initial-scale=1.0"
 >
 
-<title>
-    NovaTrade Admin
-</title>
+<title>NovaTrade Admin</title>
 
 <style>
 
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-    font-family:Arial,sans-serif;
+* {
+    box-sizing: border-box;
 }
 
-body{
-    background:#080b12;
-    color:#e8edf5;
-    min-height:100vh;
+body {
+    margin: 0;
+    background: #080b12;
+    color: #e8edf5;
+    font-family: Arial, sans-serif;
 }
 
-.header{
-    height:70px;
-    background:#0b0f17;
-    border-bottom:1px solid #1c2431;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 25px;
+.header {
+    height: 65px;
+    background: #0d1119;
+    border-bottom: 1px solid #202938;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 25px;
 }
 
-.logo{
-    font-size:22px;
-    font-weight:bold;
+.logo {
+    font-size: 22px;
+    font-weight: bold;
 }
 
-.logo span{
-    color:#4f8cff;
+.logo span {
+    color: #4f8cff;
 }
 
-.admin-label{
-    color:#f0c75e;
-    font-size:10px;
+.label {
+    color: #f0c75e;
+    font-size: 10px;
 }
 
-.container{
-    max-width:1350px;
-    margin:auto;
-    padding:25px;
+.login {
+    width: 400px;
+    max-width: 92%;
+    margin: 100px auto;
+    background: #101620;
+    border: 1px solid #293548;
+    border-radius: 12px;
+    padding: 25px;
 }
 
-.login{
-    max-width:400px;
-    margin:100px auto;
-    background:#101620;
-    border:1px solid #293446;
-    border-radius:12px;
-    padding:25px;
+.login h2 {
+    margin-top: 0;
 }
 
-.login h2{
-    margin-bottom:8px;
+.description {
+    color: #69758a;
+    font-size: 11px;
+    line-height: 1.5;
 }
 
-.description{
-    color:#687386;
-    font-size:11px;
-    line-height:1.5;
-    margin-bottom:20px;
+input {
+    width: 100%;
+    margin-top: 15px;
+    padding: 12px;
+    background: #0a0f17;
+    border: 1px solid #293548;
+    border-radius: 7px;
+    color: white;
 }
 
-input{
-    width:100%;
-    padding:12px;
-    border-radius:7px;
-    border:1px solid #293446;
-    background:#0b1018;
-    color:white;
-    outline:none;
+button {
+    cursor: pointer;
 }
 
-.login button{
-    width:100%;
-    margin-top:10px;
-    padding:12px;
-    background:#4f8cff;
-    color:white;
-    border:0;
-    border-radius:7px;
-    font-weight:bold;
-    cursor:pointer;
+.login button {
+    width: 100%;
+    margin-top: 10px;
+    padding: 12px;
+    background: #4f8cff;
+    border: 0;
+    border-radius: 7px;
+    color: white;
+    font-weight: bold;
 }
 
-.error{
-    color:#ff5c70;
-    font-size:11px;
-    margin-top:10px;
+.error {
+    color: #ff5c70;
+    font-size: 11px;
+    margin-top: 10px;
 }
 
-.dashboard{
-    display:none;
+.dashboard {
+    display: none;
 }
 
-.top{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:20px;
+.container {
+    max-width: 1400px;
+    margin: auto;
+    padding: 25px;
 }
 
-.top h1{
-    font-size:21px;
+.top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
 }
 
-.refresh{
-    background:#182238;
-    color:#b8c2d2;
-    border:1px solid #293446;
-    padding:9px 13px;
-    border-radius:7px;
-    cursor:pointer;
+.top h1 {
+    font-size: 21px;
 }
 
-.stats{
-    display:grid;
-    grid-template-columns:repeat(5,1fr);
-    gap:12px;
-    margin-bottom:20px;
+.refresh {
+    background: #182238;
+    color: white;
+    border: 1px solid #293548;
+    padding: 9px 13px;
+    border-radius: 7px;
 }
 
-.stat{
-    background:#101620;
-    border:1px solid #202b3b;
-    border-radius:9px;
-    padding:15px;
+.stats {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
 }
 
-.stat span{
-    display:block;
-    color:#687386;
-    font-size:10px;
+.stat {
+    background: #101620;
+    border: 1px solid #202c3c;
+    border-radius: 8px;
+    padding: 15px;
 }
 
-.stat strong{
-    display:block;
-    font-size:22px;
-    margin-top:7px;
+.stat span {
+    color: #69758a;
+    font-size: 10px;
 }
 
-.pending{
-    color:#f0c75e;
+.stat strong {
+    display: block;
+    font-size: 22px;
+    margin-top: 8px;
 }
 
-.active{
-    color:#4f8cff;
+.pending {
+    color: #f0c75e;
 }
 
-.win{
-    color:#2dd4a8;
+.active {
+    color: #4f8cff;
 }
 
-.loss,
-.declined{
-    color:#ff5c70;
+.win {
+    color: #2dd4a8;
 }
 
-.table-container{
-    background:#101620;
-    border:1px solid #202b3b;
-    border-radius:9px;
-    overflow:auto;
+.loss {
+    color: #ff5c70;
 }
 
-table{
-    width:100%;
-    border-collapse:collapse;
-    min-width:1150px;
+.table-box {
+    background: #101620;
+    border: 1px solid #202c3c;
+    border-radius: 8px;
+    overflow-x: auto;
 }
 
-th{
-    background:#0b1018;
-    color:#687386;
-    text-align:left;
-    font-size:10px;
-    font-weight:500;
-    padding:13px;
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1100px;
 }
 
-td{
-    padding:13px;
-    border-top:1px solid #18202c;
-    font-size:11px;
+th {
+    background: #0a0f17;
+    color: #69758a;
+    text-align: left;
+    font-size: 10px;
+    padding: 13px;
 }
 
-.action{
-    display:flex;
-    gap:6px;
+td {
+    border-top: 1px solid #1b2533;
+    padding: 13px;
+    font-size: 11px;
 }
 
-.action button{
-    border:0;
-    border-radius:5px;
-    padding:7px 10px;
-    color:white;
-    font-weight:bold;
-    font-size:9px;
-    cursor:pointer;
+.status-pending {
+    color: #f0c75e;
 }
 
-.approve{
-    background:#4f8cff;
+.status-active {
+    color: #4f8cff;
 }
 
-.win-button{
-    background:#159979;
+.status-win {
+    color: #2dd4a8;
 }
 
-.loss-button{
-    background:#d94d64;
+.status-loss,
+.status-declined {
+    color: #ff5c70;
 }
 
-.decline-button{
-    background:#6c4a56;
+.actions {
+    display: flex;
+    gap: 5px;
 }
 
-.demo-note{
-    margin-top:18px;
-    background:#101620;
-    border:1px solid #202b3b;
-    border-radius:8px;
-    padding:13px;
-    color:#687386;
-    font-size:10px;
-    line-height:1.5;
+.actions button {
+    border: 0;
+    border-radius: 5px;
+    padding: 7px 9px;
+    color: white;
+    font-size: 9px;
+    font-weight: bold;
 }
 
-.time-warning{
-    color:#f0c75e;
+.approve {
+    background: #4f8cff;
+}
+
+.decline {
+    background: #684453;
+}
+
+.win-button {
+    background: #159979;
+}
+
+.loss-button {
+    background: #d94d64;
+}
+
+.note {
+    margin-top: 18px;
+    background: #101620;
+    border: 1px solid #202c3c;
+    border-radius: 8px;
+    padding: 14px;
+    color: #69758a;
+    font-size: 10px;
+    line-height: 1.5;
 }
 
 </style>
 
 </head>
 
-
 <body>
 
 
-<header class="header">
+<div class="header">
 
     <div class="logo">
         Nova<span>Trade</span>
     </div>
 
-    <div class="admin-label">
-        DEMO ADMIN PANEL
+    <div class="label">
+        DEMO ADMIN
     </div>
 
-</header>
+</div>
 
 
 <!-- =====================================================
@@ -284,8 +290,8 @@ td{
 
     <p class="description">
 
-        Enter the administrator password
-        configured in your Render environment.
+        Enter the ADMIN_PASSWORD configured
+        in your Render service.
 
     </p>
 
@@ -305,8 +311,8 @@ td{
 
 
     <div
-        class="error"
         id="loginError"
+        class="error"
     ></div>
 
 </div>
@@ -419,11 +425,10 @@ td{
 
         </div>
 
-
     </div>
 
 
-    <div class="table-container">
+    <div class="table-box">
 
         <table>
 
@@ -431,41 +436,15 @@ td{
 
                 <tr>
 
-                    <th>
-                        ID
-                    </th>
-
-                    <th>
-                        MARKET
-                    </th>
-
-                    <th>
-                        DIRECTION
-                    </th>
-
-                    <th>
-                        AMOUNT
-                    </th>
-
-                    <th>
-                        CREATED
-                    </th>
-
-                    <th>
-                        APPROVAL DEADLINE
-                    </th>
-
-                    <th>
-                        STATUS
-                    </th>
-
-                    <th>
-                        SOURCE
-                    </th>
-
-                    <th>
-                        ACTION
-                    </th>
+                    <th>ID</th>
+                    <th>MARKET</th>
+                    <th>DIRECTION</th>
+                    <th>AMOUNT</th>
+                    <th>CREATED</th>
+                    <th>APPROVAL DEADLINE</th>
+                    <th>STATUS</th>
+                    <th>SOURCE</th>
+                    <th>ACTION</th>
 
                 </tr>
 
@@ -481,44 +460,39 @@ td{
     </div>
 
 
-    <div class="demo-note">
+    <div class="note">
 
         <strong>
-            DEMO ONLY:
+            DEMO SYSTEM
         </strong>
 
-        A submitted request stays in
-        <strong>
-            PENDING_APPROVAL
-        </strong>
+        <br><br>
+
+        New requests remain in
+        <strong>PENDING_APPROVAL</strong>
         for 60 seconds.
 
         <br><br>
 
         Clicking
-        <strong>
-            APPROVE
-        </strong>
-        starts the simulated 60-second trade.
+        <strong>APPROVE</strong>
+        changes the request to
+        <strong>ACTIVE</strong>
+        and starts the 60-second simulated trade.
 
         <br><br>
 
-        If nobody approves it before the
-        approval deadline, the backend automatically
+        If the request is not approved before
+        the deadline, the backend automatically
         changes it to
-        <strong>
-            DECLINED
-        </strong>.
+        <strong>DECLINED</strong>.
 
         <br><br>
 
-        Once active, the administrator can manually
-        resolve it as WIN or LOSS. If no manual result
-        is selected, the backend automatically resolves
-        the demo trade after 60 seconds.
+        This system does not execute real trades
+        or transfer real money.
 
     </div>
-
 
 </div>
 
@@ -527,20 +501,15 @@ td{
 
 <script>
 
-
-let adminPassword =
-    "";
-
-
-let refreshTimer =
-    null;
+let adminPassword = "";
+let refreshTimer = null;
 
 
 /* =====================================================
    LOGIN
 ===================================================== */
 
-async function login(){
+async function login() {
 
     const password =
         document.getElementById(
@@ -548,39 +517,31 @@ async function login(){
         ).value;
 
 
-    if(!password){
+    if (!password) {
 
         return;
 
     }
 
 
-    try{
+    try {
 
         const response =
             await fetch(
-
                 "/api/admin/login",
-
                 {
+                    method: "POST",
 
-                    method:
-                        "POST",
-
-                    headers:{
+                    headers: {
                         "Content-Type":
                             "application/json"
                     },
 
                     body:
                         JSON.stringify({
-
                             password
-
                         })
-
                 }
-
             );
 
 
@@ -588,7 +549,7 @@ async function login(){
             await response.json();
 
 
-        if(!response.ok){
+        if (!response.ok) {
 
             document.getElementById(
                 "loginError"
@@ -622,15 +583,13 @@ async function login(){
 
         refreshTimer =
             setInterval(
-
                 loadTrades,
-
-                1000
-
+                1500
             );
 
     }
-    catch(error){
+
+    catch (error) {
 
         document.getElementById(
             "loginError"
@@ -643,45 +602,36 @@ async function login(){
 
 
 /* =====================================================
-   LOAD TRADES
+   LOAD
 ===================================================== */
 
-async function loadTrades(){
+async function loadTrades() {
 
-    if(!adminPassword){
-
-        return;
-
-    }
+    if (!adminPassword) return;
 
 
-    try{
+    try {
 
         const response =
             await fetch(
-
                 "/api/admin/trades",
-
                 {
-
-                    headers:{
-
+                    headers: {
                         "x-admin-password":
                             adminPassword
-
                     }
-
                 }
-
             );
 
 
-        if(
-            response.status === 401
-        ){
+        if (response.status === 401) {
 
             clearInterval(
                 refreshTimer
+            );
+
+            alert(
+                "Admin authentication expired."
             );
 
             location.reload();
@@ -700,11 +650,10 @@ async function loadTrades(){
         );
 
     }
-    catch(error){
 
-        console.error(
-            error
-        );
+    catch (error) {
+
+        console.error(error);
 
     }
 
@@ -712,12 +661,10 @@ async function loadTrades(){
 
 
 /* =====================================================
-   RENDER TRADES
+   RENDER
 ===================================================== */
 
-function renderTrades(
-    trades
-){
+function renderTrades(trades) {
 
     const table =
         document.getElementById(
@@ -725,306 +672,219 @@ function renderTrades(
         );
 
 
-    table.innerHTML =
-        "";
+    table.innerHTML = "";
 
 
-    let pending =
-        0;
+    let pending = 0;
+    let active = 0;
+    let wins = 0;
+    let losses = 0;
 
-    let active =
-        0;
 
-    let wins =
-        0;
+    trades.forEach(trade => {
 
-    let losses =
-        0;
+        if (
+            trade.status ===
+            "PENDING_APPROVAL"
+        ) pending++;
 
 
-    trades.forEach(
+        if (
+            trade.status ===
+            "ACTIVE"
+        ) active++;
 
-        trade => {
 
+        if (
+            trade.status ===
+            "WIN"
+        ) wins++;
 
-            if(
-                trade.status ===
-                "PENDING_APPROVAL"
-            ){
 
-                pending++;
+        if (
+            trade.status ===
+            "LOSS"
+        ) losses++;
 
-            }
 
+        const row =
+            document.createElement(
+                "tr"
+            );
 
-            if(
-                trade.status ===
-                "ACTIVE"
-            ){
 
-                active++;
+        const id =
+            trade.id.substring(
+                0,
+                8
+            );
 
-            }
 
+        const created =
+            new Date(
+                trade.created_at
+            ).toLocaleTimeString();
 
-            if(
-                trade.status ===
-                "WIN"
-            ){
 
-                wins++;
+        const deadline =
+            new Date(
+                trade.approval_expires_at
+            ).toLocaleTimeString();
 
-            }
 
+        let statusClass =
+            "status-pending";
 
-            if(
-                trade.status ===
-                "LOSS"
-            ){
 
-                losses++;
+        if (
+            trade.status ===
+            "ACTIVE"
+        )
+            statusClass =
+                "status-active";
 
-            }
 
+        if (
+            trade.status ===
+            "WIN"
+        )
+            statusClass =
+                "status-win";
 
-            const row =
-                document.createElement(
-                    "tr"
-                );
 
+        if (
+            trade.status ===
+            "LOSS" ||
+            trade.status ===
+            "DECLINED"
+        )
+            statusClass =
+                "status-loss";
 
-            const shortId =
-                String(
-                    trade.id
-                ).substring(
-                    0,
-                    8
-                );
 
+        let action = "";
 
-            const created =
-                new Date(
-                    trade.created_at
-                ).toLocaleTimeString();
 
+        if (
+            trade.status ===
+            "PENDING_APPROVAL"
+        ) {
 
-            const deadline =
-                new Date(
-                    trade.approval_expires_at
-                );
+            action = `
 
-
-            const deadlineText =
-                deadline.toLocaleTimeString();
-
-
-            let statusClass =
-                "pending";
-
-
-            if(
-                trade.status ===
-                "ACTIVE"
-            ){
-
-                statusClass =
-                    "active";
-
-            }
-
-
-            if(
-                trade.status ===
-                "WIN"
-            ){
-
-                statusClass =
-                    "win";
-
-            }
-
-
-            if(
-                trade.status ===
-                "LOSS"
-            ){
-
-                statusClass =
-                    "loss";
-
-            }
-
-
-            if(
-                trade.status ===
-                "DECLINED"
-            ){
-
-                statusClass =
-                    "declined";
-
-            }
-
-
-            let action =
-                "";
-
-
-            /*
-             * Waiting for approval.
-             */
-
-            if(
-                trade.status ===
-                "PENDING_APPROVAL"
-            ){
-
-                action = `
-
-                    <div class="action">
-
-                        <button
-                            class="approve"
-                            onclick="approveTrade(
-                                '${trade.id}'
-                            )"
-                        >
-                            APPROVE
-                        </button>
-
-                        <button
-                            class="decline-button"
-                            onclick="declineTrade(
-                                '${trade.id}'
-                            )"
-                        >
-                            DECLINE
-                        </button>
-
-                    </div>
-
-                `;
-
-            }
-
-
-            /*
-             * Active trade.
-             */
-
-            else if(
-                trade.status ===
-                "ACTIVE"
-            ){
-
-                action = `
-
-                    <div class="action">
-
-                        <button
-                            class="win-button"
-                            onclick="resolveTrade(
-                                '${trade.id}',
-                                'WIN'
-                            )"
-                        >
-                            WIN
-                        </button>
-
-                        <button
-                            class="loss-button"
-                            onclick="resolveTrade(
-                                '${trade.id}',
-                                'LOSS'
-                            )"
-                        >
-                            LOSS
-                        </button>
-
-                    </div>
-
-                `;
-
-            }
-
-
-            else{
-
-                action = `
-
-                    <span style="
-                        color:#596579
-                    ">
-                        Resolved
-                    </span>
-
-                `;
-
-            }
-
-
-            row.innerHTML = `
-
-                <td>
-                    #${shortId}
-                </td>
-
-                <td>
-                    ${trade.market}
-                </td>
-
-                <td>
-                    ${trade.direction}
-                </td>
-
-                <td>
-                    $${Number(
-                        trade.amount
-                    ).toFixed(2)}
-                </td>
-
-                <td>
-                    ${created}
-                </td>
-
-                <td
-                    class="${
-                        trade.status ===
-                        "PENDING_APPROVAL"
-                        ? "time-warning"
-                        : ""
-                    }"
-                >
-                    ${deadlineText}
-                </td>
-
-                <td
-                    class="${statusClass}"
-                >
-                    ${trade.status}
-                </td>
-
-                <td>
-                    ${
-                        trade.resolution_source
-                        || "—"
-                    }
-                </td>
-
-                <td>
-                    ${action}
-                </td>
+                <div class="actions">
+
+                    <button
+                        class="approve"
+                        onclick="approveTrade('${trade.id}')"
+                    >
+                        APPROVE
+                    </button>
+
+                    <button
+                        class="decline"
+                        onclick="declineTrade('${trade.id}')"
+                    >
+                        DECLINE
+                    </button>
+
+                </div>
 
             `;
 
+        }
 
-            table.appendChild(
-                row
-            );
+
+        else if (
+            trade.status ===
+            "ACTIVE"
+        ) {
+
+            action = `
+
+                <div class="actions">
+
+                    <button
+                        class="win-button"
+                        onclick="resolveTrade('${trade.id}', 'WIN')"
+                    >
+                        WIN
+                    </button>
+
+                    <button
+                        class="loss-button"
+                        onclick="resolveTrade('${trade.id}', 'LOSS')"
+                    >
+                        LOSS
+                    </button>
+
+                </div>
+
+            `;
 
         }
 
-    );
+
+        else {
+
+            action =
+                `<span style="color:#596579">
+                    Completed
+                </span>`;
+
+        }
+
+
+        row.innerHTML = `
+
+            <td>
+                #${id}
+            </td>
+
+            <td>
+                ${trade.market}
+            </td>
+
+            <td>
+                ${trade.direction}
+            </td>
+
+            <td>
+                $${Number(
+                    trade.amount
+                ).toFixed(2)}
+            </td>
+
+            <td>
+                ${created}
+            </td>
+
+            <td>
+                ${deadline}
+            </td>
+
+            <td
+                class="${statusClass}"
+            >
+                ${trade.status}
+            </td>
+
+            <td>
+                ${trade.resolution_source || "—"}
+            </td>
+
+            <td>
+                ${action}
+            </td>
+
+        `;
+
+
+        table.appendChild(
+            row
+        );
+
+    });
 
 
     document.getElementById(
@@ -1063,42 +923,28 @@ function renderTrades(
    APPROVE
 ===================================================== */
 
-async function approveTrade(
-    id
-){
+async function approveTrade(id) {
 
-    if(
+    if (
         !confirm(
             "Approve this demo trade?"
         )
-    ){
-
-        return;
-
-    }
+    ) return;
 
 
-    try{
+    try {
 
         const response =
             await fetch(
-
                 `/api/admin/trades/${id}/approve`,
-
                 {
+                    method: "POST",
 
-                    method:
-                        "POST",
-
-                    headers:{
-
+                    headers: {
                         "x-admin-password":
                             adminPassword
-
                     }
-
                 }
-
             );
 
 
@@ -1106,14 +952,12 @@ async function approveTrade(
             await response.json();
 
 
-        if(!response.ok){
+        if (!response.ok) {
 
             alert(
                 data.error ||
-                "Unable to approve trade."
+                "Unable to approve."
             );
-
-            loadTrades();
 
             return;
 
@@ -1123,7 +967,8 @@ async function approveTrade(
         loadTrades();
 
     }
-    catch(error){
+
+    catch (error) {
 
         alert(
             "Server error."
@@ -1135,45 +980,31 @@ async function approveTrade(
 
 
 /* =====================================================
-   ADMIN DECLINE
+   DECLINE
 ===================================================== */
 
-async function declineTrade(
-    id
-){
+async function declineTrade(id) {
 
-    if(
+    if (
         !confirm(
             "Decline this demo trade?"
         )
-    ){
-
-        return;
-
-    }
+    ) return;
 
 
-    try{
+    try {
 
         const response =
             await fetch(
-
                 `/api/admin/trades/${id}/decline`,
-
                 {
+                    method: "POST",
 
-                    method:
-                        "POST",
-
-                    headers:{
-
+                    headers: {
                         "x-admin-password":
                             adminPassword
-
                     }
-
                 }
-
             );
 
 
@@ -1181,11 +1012,11 @@ async function declineTrade(
             await response.json();
 
 
-        if(!response.ok){
+        if (!response.ok) {
 
             alert(
                 data.error ||
-                "Unable to decline trade."
+                "Unable to decline."
             );
 
             return;
@@ -1196,7 +1027,8 @@ async function declineTrade(
         loadTrades();
 
     }
-    catch(error){
+
+    catch (error) {
 
         alert(
             "Server error."
@@ -1208,56 +1040,42 @@ async function declineTrade(
 
 
 /* =====================================================
-   RESOLVE WIN / LOSS
+   RESOLVE
 ===================================================== */
 
 async function resolveTrade(
     id,
     result
-){
+) {
 
-    if(
+    if (
         !confirm(
-            `Set this active demo trade to ${result}?`
+            `Set this demo trade to ${result}?`
         )
-    ){
-
-        return;
-
-    }
+    ) return;
 
 
-    try{
+    try {
 
         const response =
             await fetch(
-
                 `/api/admin/trades/${id}/resolve`,
-
                 {
+                    method: "POST",
 
-                    method:
-                        "POST",
-
-                    headers:{
-
+                    headers: {
                         "Content-Type":
                             "application/json",
 
                         "x-admin-password":
                             adminPassword
-
                     },
 
                     body:
                         JSON.stringify({
-
                             result
-
                         })
-
                 }
-
             );
 
 
@@ -1265,11 +1083,11 @@ async function resolveTrade(
             await response.json();
 
 
-        if(!response.ok){
+        if (!response.ok) {
 
             alert(
                 data.error ||
-                "Unable to resolve trade."
+                "Unable to resolve."
             );
 
             return;
@@ -1280,7 +1098,8 @@ async function resolveTrade(
         loadTrades();
 
     }
-    catch(error){
+
+    catch (error) {
 
         alert(
             "Server error."
@@ -1292,30 +1111,24 @@ async function resolveTrade(
 
 
 /* =====================================================
-   ENTER KEY LOGIN
+   ENTER KEY
 ===================================================== */
 
 document
-    .getElementById(
-        "password"
-    )
+    .getElementById("password")
     .addEventListener(
-
         "keydown",
-
         event => {
 
-            if(
-                event.key ===
-                "Enter"
-            ){
+            if (
+                event.key === "Enter"
+            ) {
 
                 login();
 
             }
 
         }
-
     );
 
 </script>
