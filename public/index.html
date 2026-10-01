@@ -10,445 +10,307 @@
     content="width=device-width, initial-scale=1.0"
 >
 
-<title>
-    NovaTrade Demo
-</title>
+<title>NovaTrade Demo</title>
 
 <script src="https://unpkg.com/lightweight-charts@5.2.0/dist/lightweight-charts.standalone.production.js"></script>
 
 <style>
 
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-    font-family:Arial,sans-serif;
+* {
+    box-sizing: border-box;
 }
 
-body{
-    background:#080b12;
-    color:#e8edf5;
-    min-height:100vh;
+body {
+    margin: 0;
+    background: #080b12;
+    color: #e8edf5;
+    font-family: Arial, sans-serif;
 }
 
-.header{
-    height:70px;
-    background:#0b0f17;
-    border-bottom:1px solid #1c2431;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 25px;
+.header {
+    height: 65px;
+    background: #0d1119;
+    border-bottom: 1px solid #202938;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 25px;
 }
 
-.logo{
-    font-size:23px;
-    font-weight:bold;
+.logo {
+    font-size: 22px;
+    font-weight: bold;
 }
 
-.logo span{
-    color:#4f8cff;
+.logo span {
+    color: #4f8cff;
 }
 
-.live{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    color:#7f8b9e;
-    font-size:10px;
+.demo {
+    color: #f0c75e;
+    font-size: 10px;
+    border: 1px solid #5b4c20;
+    background: #211c0c;
+    padding: 6px 10px;
+    border-radius: 15px;
 }
 
-.dot{
-    width:8px;
-    height:8px;
-    border-radius:50%;
-    background:#2dd4a8;
+.main {
+    display: flex;
+    min-height: calc(100vh - 65px);
 }
 
-.hero{
-    background:#0b0f17;
-    border-bottom:1px solid #1c2431;
-    padding:15px 25px;
+.left {
+    flex: 1;
+    min-width: 0;
 }
 
-.hero h2{
-    font-size:17px;
+.market-bar {
+    height: 65px;
+    border-bottom: 1px solid #202938;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
 }
 
-.hero p{
-    margin-top:5px;
-    color:#687386;
-    font-size:10px;
+.market-name {
+    font-weight: bold;
 }
 
-.demo-label{
-    display:inline-block;
-    margin-top:7px;
-    padding:5px 9px;
-    border-radius:15px;
-    background:#332b12;
-    border:1px solid #65521e;
-    color:#f0c75e;
-    font-size:9px;
-    font-weight:bold;
+.market-price {
+    font-size: 17px;
+    font-weight: bold;
 }
 
-.main{
-    display:flex;
-    height:calc(100vh - 116px);
+.chart {
+    height: calc(100vh - 130px);
 }
 
-.chart-area{
-    flex:1;
-    min-width:0;
+.panel {
+    width: 340px;
+    background: #0d1119;
+    border-left: 1px solid #202938;
+    padding: 20px;
 }
 
-.market{
-    height:65px;
-    border-bottom:1px solid #1c2431;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 20px;
+.panel h2 {
+    margin-top: 0;
+    font-size: 18px;
 }
 
-.asset{
-    display:flex;
-    align-items:center;
-    gap:10px;
+.sub {
+    color: #69758a;
+    font-size: 11px;
+    line-height: 1.5;
 }
 
-.icon{
-    width:38px;
-    height:38px;
-    border-radius:50%;
-    background:#182238;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-weight:bold;
-}
-
-.asset-name{
-    font-size:14px;
-    font-weight:bold;
-}
-
-.asset-symbol{
-    color:#687386;
-    font-size:10px;
-    margin-top:3px;
-}
-
-.price{
-    font-size:17px;
-    font-weight:bold;
-}
-
-.change{
-    font-size:10px;
-    margin-left:5px;
-}
-
-.chart{
-    height:calc(100% - 65px);
-}
-
-.trade-panel{
-    width:330px;
-    border-left:1px solid #1c2431;
-    background:#0d111a;
-    padding:20px;
-}
-
-.trade-panel h3{
-    font-size:16px;
-}
-
-.description{
-    color:#687386;
-    font-size:10px;
-    line-height:1.5;
-    margin:7px 0 20px;
-}
-
-.field{
-    margin-bottom:15px;
-}
-
-label{
-    display:block;
-    color:#738095;
-    font-size:10px;
-    margin-bottom:7px;
+label {
+    display: block;
+    color: #758196;
+    font-size: 10px;
+    margin: 18px 0 7px;
 }
 
 select,
-input{
-    width:100%;
-    padding:12px;
-    background:#121925;
-    border:1px solid #293446;
-    border-radius:7px;
-    color:white;
-    outline:none;
+input {
+    width: 100%;
+    background: #111824;
+    border: 1px solid #293548;
+    color: white;
+    padding: 12px;
+    border-radius: 7px;
 }
 
-.payout{
-    background:#101620;
-    border:1px solid #202b3b;
-    border-radius:7px;
-    padding:12px;
-    margin-bottom:15px;
+.payout {
+    margin-top: 15px;
+    padding: 12px;
+    border: 1px solid #202c3c;
+    background: #0a0f17;
+    border-radius: 7px;
+    font-size: 11px;
 }
 
-.row{
-    display:flex;
-    justify-content:space-between;
-    padding:4px 0;
-    font-size:11px;
+.payout-row {
+    display: flex;
+    justify-content: space-between;
+    margin: 6px 0;
 }
 
-.muted{
-    color:#687386;
+.green {
+    color: #2dd4a8;
 }
 
-.green{
-    color:#2dd4a8;
+.buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 15px;
 }
 
-.buttons{
-    display:flex;
-    gap:8px;
+.buttons button {
+    flex: 1;
+    padding: 14px;
+    border: 0;
+    border-radius: 7px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
 }
 
-.buttons button{
-    flex:1;
-    border:0;
-    border-radius:7px;
-    padding:14px;
-    color:white;
-    font-weight:bold;
-    cursor:pointer;
+.call {
+    background: #159979;
 }
 
-.call{
-    background:#159979;
+.put {
+    background: #d94d64;
 }
 
-.put{
-    background:#d94d64;
+.notice {
+    margin-top: 15px;
+    border: 1px solid #202c3c;
+    background: #0a0f17;
+    border-radius: 7px;
+    padding: 12px;
+    color: #687386;
+    font-size: 9px;
+    line-height: 1.5;
 }
 
-.notice{
-    margin-top:15px;
-    background:#0a0f17;
-    border:1px solid #202b3b;
-    border-radius:7px;
-    padding:12px;
-    color:#687386;
-    font-size:9px;
-    line-height:1.5;
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.82);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
 }
 
-
-/* =====================================================
-   MODAL
-===================================================== */
-
-.modal{
-    position:fixed;
-    inset:0;
-    z-index:100;
-    background:rgba(0,0,0,.84);
-    display:none;
-    align-items:center;
-    justify-content:center;
+.modal-box {
+    width: 430px;
+    max-width: 92%;
+    background: #101620;
+    border: 1px solid #293548;
+    border-radius: 12px;
+    padding: 25px;
 }
 
-.modal-box{
-    width:440px;
-    max-width:92%;
-    background:#101620;
-    border:1px solid #293446;
-    border-radius:13px;
-    padding:26px;
+.modal-box h2 {
+    margin-top: 0;
 }
 
-.modal-box h2{
-    font-size:20px;
-    margin-bottom:7px;
+.summary {
+    background: #0a0f17;
+    border: 1px solid #202c3c;
+    border-radius: 7px;
+    padding: 13px;
+    margin-top: 18px;
 }
 
-.modal-text{
-    color:#7f8b9e;
-    font-size:11px;
-    line-height:1.5;
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 0;
+    font-size: 11px;
 }
 
-.summary{
-    margin-top:17px;
-    padding:13px;
-    background:#0b1018;
-    border:1px solid #202b3b;
-    border-radius:8px;
+.summary-row span {
+    color: #69758a;
 }
 
-.summary-row{
-    display:flex;
-    justify-content:space-between;
-    padding:6px 0;
-    font-size:11px;
+.primary,
+.secondary {
+    width: 100%;
+    border: 0;
+    border-radius: 7px;
+    padding: 13px;
+    margin-top: 12px;
+    cursor: pointer;
+    font-weight: bold;
 }
 
-.summary-row span{
-    color:#687386;
+.primary {
+    background: #4f8cff;
+    color: white;
 }
 
-.primary{
-    width:100%;
-    margin-top:15px;
-    border:0;
-    border-radius:7px;
-    padding:13px;
-    background:#4f8cff;
-    color:white;
-    font-weight:bold;
-    cursor:pointer;
+.secondary {
+    background: #1c2635;
+    color: white;
 }
 
-.secondary{
-    width:100%;
-    margin-top:7px;
-    border:0;
-    border-radius:7px;
-    padding:11px;
-    background:#1b2432;
-    color:white;
-    cursor:pointer;
+.spinner {
+    width: 45px;
+    height: 45px;
+    border: 4px solid #273347;
+    border-top-color: #4f8cff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: auto;
 }
 
-
-/* =====================================================
-   VERIFYING
-===================================================== */
-
-.verifying-box{
-    text-align:center;
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }
 
-.spinner{
-    width:45px;
-    height:45px;
-    border-radius:50%;
-    border:4px solid #263143;
-    border-top-color:#4f8cff;
-    animation:spin 1s linear infinite;
-    margin:0 auto 17px;
+.center {
+    text-align: center;
 }
 
-@keyframes spin{
+.countdown {
+    color: #4f8cff;
+    font-size: 30px;
+    font-weight: bold;
+    margin-top: 18px;
+}
 
-    to{
-        transform:rotate(360deg);
+.timer {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #101620;
+    border: 1px solid #293548;
+    border-radius: 8px;
+    padding: 11px 18px;
+    z-index: 90;
+    font-size: 11px;
+}
+
+.timer strong {
+    color: #4f8cff;
+    font-size: 16px;
+}
+
+.result-title {
+    text-align: center;
+    font-size: 34px;
+    font-weight: bold;
+}
+
+.result-text {
+    text-align: center;
+    color: #78859a;
+    font-size: 11px;
+    margin-top: 7px;
+}
+
+@media(max-width:800px) {
+
+    .main {
+        display: block;
     }
 
-}
-
-.verify-title{
-    font-size:20px;
-    font-weight:bold;
-}
-
-.verify-subtitle{
-    color:#778397;
-    font-size:11px;
-    margin-top:7px;
-    line-height:1.5;
-}
-
-.verify-countdown{
-    margin-top:17px;
-    font-size:30px;
-    font-weight:bold;
-    color:#4f8cff;
-}
-
-.status-pill{
-    display:inline-block;
-    margin-top:12px;
-    padding:5px 10px;
-    border-radius:15px;
-    background:#332b12;
-    color:#f0c75e;
-    font-size:9px;
-    font-weight:bold;
-}
-
-
-/* =====================================================
-   ACTIVE TIMER
-===================================================== */
-
-.trade-timer{
-    position:fixed;
-    top:83px;
-    left:50%;
-    transform:translateX(-50%);
-    z-index:90;
-    background:#101620;
-    border:1px solid #293446;
-    border-radius:9px;
-    padding:12px 20px;
-    box-shadow:0 15px 50px rgba(0,0,0,.6);
-    font-size:11px;
-}
-
-.timer-number{
-    color:#4f8cff;
-    font-size:15px;
-    font-weight:bold;
-}
-
-
-/* =====================================================
-   RESULT
-===================================================== */
-
-.result-title{
-    text-align:center;
-    font-size:32px;
-    font-weight:900;
-    margin-bottom:8px;
-}
-
-.result-description{
-    text-align:center;
-    color:#778397;
-    font-size:11px;
-    line-height:1.5;
-}
-
-
-/* =====================================================
-   RESPONSIVE
-===================================================== */
-
-@media(max-width:800px){
-
-    .main{
-        display:block;
-        height:auto;
+    .chart {
+        height: 450px;
     }
 
-    .chart-area{
-        height:520px;
-    }
-
-    .trade-panel{
-        width:100%;
-        border-left:0;
-        border-top:1px solid #1c2431;
+    .panel {
+        width: 100%;
+        border-left: 0;
+        border-top: 1px solid #202938;
     }
 
 }
@@ -457,207 +319,140 @@ input{
 
 </head>
 
-
 <body>
 
 
-<header class="header">
+<div class="header">
 
     <div class="logo">
         Nova<span>Trade</span>
     </div>
 
-    <div class="live">
-        <span class="dot"></span>
-        LIVE MARKET
+    <div class="demo">
+        DEMO / NO REAL MONEY
     </div>
 
-</header>
-
-
-<section class="hero">
-
-    <h2>
-        Open Demo Trading Platform
-    </h2>
-
-    <p>
-        Live public cryptocurrency market data · No account required · No deposit required
-    </p>
-
-    <span class="demo-label">
-        DEMO / NO REAL MONEY
-    </span>
-
-</section>
+</div>
 
 
 <div class="main">
 
 
-<section class="chart-area">
+<div class="left">
 
-
-    <div class="market">
-
-        <div class="asset">
-
-            <div
-                class="icon"
-                id="assetIcon"
-            >
-                Ξ
-            </div>
-
-            <div>
-
-                <div
-                    class="asset-name"
-                    id="assetName"
-                >
-                    Ethereum / USDT
-                </div>
-
-                <div
-                    class="asset-symbol"
-                    id="assetSymbol"
-                >
-                    ETHUSDT
-                </div>
-
-            </div>
-
-        </div>
-
+    <div class="market-bar">
 
         <div>
-
-            <span
-                class="price"
-                id="price"
+            <div
+                class="market-name"
+                id="marketName"
             >
-                Loading...
-            </span>
+                Ethereum / USDT
+            </div>
+        </div>
 
-            <span
-                class="change"
-                id="change"
-            >
-                --
-            </span>
-
+        <div
+            class="market-price"
+            id="price"
+        >
+            Loading...
         </div>
 
     </div>
 
-
     <div
-        class="chart"
         id="chart"
+        class="chart"
     ></div>
 
-
-</section>
-
-
-<aside class="trade-panel">
+</div>
 
 
-    <h3>
+<div class="panel">
+
+    <h2>
         Demo Trade
-    </h3>
+    </h2>
 
+    <p class="sub">
 
-    <p class="description">
-
-        Select a market and choose CALL or PUT.
-
-        Your request must be verified by the
-        demo administrator before the 60-second
-        trade starts.
+        Choose a market and demo amount.
+        Your request must first be approved by
+        the administrator.
 
     </p>
 
 
-    <div class="field">
+    <label>
+        MARKET
+    </label>
 
-        <label>
-            MARKET
-        </label>
+    <select id="market">
 
-        <select
-            id="market"
-        >
+        <option value="ETHUSDT">
+            ETH / USDT
+        </option>
 
-            <option value="ETHUSDT">
-                ETH / USDT
-            </option>
+        <option value="SOLUSDT">
+            SOL / USDT
+        </option>
 
-            <option value="SOLUSDT">
-                SOL / USDT
-            </option>
+        <option value="POLUSDT">
+            POL / USDT
+        </option>
 
-            <option value="POLUSDT">
-                POL / USDT
-            </option>
+        <option value="TRXUSDT">
+            TRX / USDT
+        </option>
 
-            <option value="TRXUSDT">
-                TRX / USDT
-            </option>
-
-        </select>
-
-    </div>
+    </select>
 
 
-    <div class="field">
+    <label>
+        DEMO AMOUNT
+    </label>
 
-        <label>
-            DEMO AMOUNT
-        </label>
-
-        <input
-            id="amount"
-            type="number"
-            min="1"
-            value="100"
-        >
-
-    </div>
+    <input
+        id="amount"
+        type="number"
+        min="1"
+        value="100"
+    >
 
 
     <div class="payout">
 
-        <div class="row">
+        <div class="payout-row">
 
-            <span class="muted">
-                Below $500
+            <span>
+                Amount
             </span>
 
-            <strong class="green">
+            <strong id="amountDisplay">
+                $100.00
+            </strong>
+
+        </div>
+
+        <div class="payout-row">
+
+            <span>
+                Demo multiplier
+            </span>
+
+            <strong
+                class="green"
+                id="multiplier"
+            >
                 1.8×
             </strong>
 
         </div>
 
+        <div class="payout-row">
 
-        <div class="row">
-
-            <span class="muted">
-                $500+
-            </span>
-
-            <strong class="green">
-                3×
-            </strong>
-
-        </div>
-
-
-        <div class="row">
-
-            <span class="muted">
-                Potential return
+            <span>
+                Potential demo return
             </span>
 
             <strong
@@ -676,14 +471,14 @@ input{
 
         <button
             class="call"
-            onclick="requestTrade('CALL')"
+            onclick="openConfirm('CALL')"
         >
             ▲ CALL
         </button>
 
         <button
             class="put"
-            onclick="requestTrade('PUT')"
+            onclick="openConfirm('PUT')"
         >
             ▼ PUT
         </button>
@@ -699,28 +494,33 @@ input{
 
         <br><br>
 
-        Your request first goes to the demo
-        administrator for approval.
+        After submission, the administrator has
+        60 seconds to approve the request.
 
         <br><br>
 
-        If it is not approved within 60 seconds,
-        the request is automatically declined.
+        If approved, the simulated trade runs
+        for 60 seconds.
 
         <br><br>
 
-        No cryptocurrency or real money is involved.
+        If approval is not received within
+        60 seconds, the request is automatically
+        declined.
+
+        <br><br>
+
+        No real money or cryptocurrency is involved.
 
     </div>
 
-
-</aside>
+</div>
 
 </div>
 
 
 <!-- =====================================================
-     CONFIRM TRADE MODAL
+     CONFIRM MODAL
 ===================================================== -->
 
 <div
@@ -728,79 +528,54 @@ input{
     id="confirmModal"
 >
 
-    <div class="modal-box">
+<div class="modal-box">
 
-        <h2>
-            Submit Demo Trade
-        </h2>
+    <h2>
+        Submit Demo Trade
+    </h2>
 
-        <p class="modal-text">
-
-            Your demo trade will first be sent
-            for administrator verification.
-
-        </p>
+    <p class="sub">
+        This request will be sent to the
+        administrator for approval.
+    </p>
 
 
-        <div class="summary">
+    <div class="summary">
 
-            <div class="summary-row">
-
-                <span>
-                    Market
-                </span>
-
-                <strong id="confirmMarket">
-                    ETHUSDT
-                </strong>
-
-            </div>
-
-
-            <div class="summary-row">
-
-                <span>
-                    Direction
-                </span>
-
-                <strong id="confirmDirection">
-                    CALL
-                </strong>
-
-            </div>
-
-
-            <div class="summary-row">
-
-                <span>
-                    Demo Amount
-                </span>
-
-                <strong id="confirmAmount">
-                    $100.00
-                </strong>
-
-            </div>
-
+        <div class="summary-row">
+            <span>Market</span>
+            <strong id="confirmMarket"></strong>
         </div>
 
+        <div class="summary-row">
+            <span>Direction</span>
+            <strong id="confirmDirection"></strong>
+        </div>
 
-        <button
-            class="primary"
-            onclick="submitTrade()"
-        >
-            Send for Verification
-        </button>
-
-
-        <button
-            class="secondary"
-            onclick="closeConfirm()"
-        >
-            Cancel
-        </button>
+        <div class="summary-row">
+            <span>Amount</span>
+            <strong id="confirmAmount"></strong>
+        </div>
 
     </div>
+
+
+    <button
+        class="primary"
+        onclick="submitTrade()"
+    >
+        Send for Verification
+    </button>
+
+
+    <button
+        class="secondary"
+        onclick="closeConfirm()"
+    >
+        Cancel
+    </button>
+
+</div>
 
 </div>
 
@@ -811,109 +586,66 @@ input{
 
 <div
     class="modal"
-    id="verifyingModal"
+    id="verifyModal"
 >
 
-    <div class="modal-box verifying-box">
+<div class="modal-box center">
 
-        <div class="spinner"></div>
+    <div class="spinner"></div>
 
+    <h2>
+        Verifying Your Demo Trade
+    </h2>
 
-        <div class="verify-title">
-            Verifying Your Demo Trade
-        </div>
+    <p class="sub">
 
+        Your request has been submitted.
 
-        <div class="verify-subtitle">
+        <br>
 
-            Your request has been submitted.
+        Waiting for administrator approval.
 
-            <br>
-
-            Please wait for administrator approval.
-
-        </div>
+    </p>
 
 
-        <div
-            class="verify-countdown"
-            id="approvalCountdown"
-        >
-            1:00
-        </div>
-
-
-        <div class="status-pill">
-            WAITING FOR APPROVAL
-        </div>
-
+    <div
+        class="countdown"
+        id="approvalCountdown"
+    >
+        1:00
     </div>
+
+
+    <p class="sub">
+        WAITING FOR APPROVAL
+    </p>
+
+</div>
 
 </div>
 
 
 <script>
 
-
-/* =====================================================
-   VARIABLES
-===================================================== */
-
 const coins = {
 
-    ETHUSDT:{
-        name:"Ethereum / USDT",
-        icon:"Ξ"
-    },
-
-    SOLUSDT:{
-        name:"Solana / USDT",
-        icon:"S"
-    },
-
-    POLUSDT:{
-        name:"Polygon / USDT",
-        icon:"P"
-    },
-
-    TRXUSDT:{
-        name:"TRON / USDT",
-        icon:"T"
-    }
+    ETHUSDT: "Ethereum / USDT",
+    SOLUSDT: "Solana / USDT",
+    POLUSDT: "Polygon / USDT",
+    TRXUSDT: "TRON / USDT"
 
 };
 
+let currentMarket = "ETHUSDT";
+let currentPrice = null;
+let selectedDirection = null;
+let tradeId = null;
 
-let currentMarket =
-    "ETHUSDT";
-
-
-let selectedDirection =
-    null;
-
-
-let lastPrice =
-    null;
-
-
-let websocket =
-    null;
-
-
-let currentTradeId =
-    null;
-
-
-let pollingTimer =
-    null;
-
-
-let approvalTimer =
-    null;
-
-
-let activeTimer =
-    null;
+let pollTimer = null;
+let approvalTimer = null;
+let activeTimer = null;
+let activeTimerElement = null;
+let websocket = null;
 
 
 /* =====================================================
@@ -921,79 +653,48 @@ let activeTimer =
 ===================================================== */
 
 const chartElement =
-    document.getElementById(
-        "chart"
-    );
-
+    document.getElementById("chart");
 
 const chart =
     LightweightCharts.createChart(
-
         chartElement,
-
         {
-
-            layout:{
-
-                background:{
-                    type:"solid",
-                    color:"#080b12"
+            layout: {
+                background: {
+                    type: "solid",
+                    color: "#080b12"
                 },
-
-                textColor:"#778397"
-
+                textColor: "#718096"
             },
-
-            grid:{
-
-                vertLines:{
-                    color:"#121925"
+            grid: {
+                vertLines: {
+                    color: "#121925"
                 },
-
-                horzLines:{
-                    color:"#121925"
+                horzLines: {
+                    color: "#121925"
                 }
-
             },
-
-            rightPriceScale:{
-                borderColor:"#1c2431"
+            rightPriceScale: {
+                borderColor: "#202938"
             },
-
-            timeScale:{
-
-                borderColor:"#1c2431",
-
-                timeVisible:true,
-
-                secondsVisible:false
-
+            timeScale: {
+                borderColor: "#202938",
+                timeVisible: true
             }
-
         }
-
     );
 
 
-const series =
+const candleSeries =
     chart.addSeries(
-
         LightweightCharts.CandlestickSeries,
-
         {
-
-            upColor:"#26a69a",
-
-            downColor:"#ef5350",
-
-            borderVisible:false,
-
-            wickUpColor:"#26a69a",
-
-            wickDownColor:"#ef5350"
-
+            upColor: "#26a69a",
+            downColor: "#ef5350",
+            wickUpColor: "#26a69a",
+            wickDownColor: "#ef5350",
+            borderVisible: false
         }
-
     );
 
 
@@ -1001,60 +702,29 @@ const series =
    LOAD MARKET
 ===================================================== */
 
-async function loadMarket(
-    symbol
-){
+async function loadMarket(symbol) {
 
-    currentMarket =
-        symbol;
+    currentMarket = symbol;
 
-
-    const coin =
+    document.getElementById(
+        "marketName"
+    ).textContent =
         coins[symbol];
 
 
-    document.getElementById(
-        "assetName"
-    ).textContent =
-        coin.name;
-
-
-    document.getElementById(
-        "assetSymbol"
-    ).textContent =
-        symbol;
-
-
-    document.getElementById(
-        "assetIcon"
-    ).textContent =
-        coin.icon;
-
-
-    if(websocket){
+    if (websocket) {
 
         websocket.close();
 
     }
 
 
-    try{
+    try {
 
         const response =
             await fetch(
-
-                `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=1m&limit=300`
-
+                `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=1m&limit=200`
             );
-
-
-        if(!response.ok){
-
-            throw new Error(
-                "Market unavailable"
-            );
-
-        }
 
 
         const data =
@@ -1062,33 +732,29 @@ async function loadMarket(
 
 
         const candles =
-            data.map(
+            data.map(item => ({
 
-                item => ({
+                time:
+                    Math.floor(
+                        item[0] / 1000
+                    ),
 
-                    time:
-                        Math.floor(
-                            item[0] / 1000
-                        ),
+                open:
+                    Number(item[1]),
 
-                    open:
-                        Number(item[1]),
+                high:
+                    Number(item[2]),
 
-                    high:
-                        Number(item[2]),
+                low:
+                    Number(item[3]),
 
-                    low:
-                        Number(item[3]),
+                close:
+                    Number(item[4])
 
-                    close:
-                        Number(item[4])
-
-                })
-
-            );
+            }));
 
 
-        series.setData(
+        candleSeries.setData(
             candles
         );
 
@@ -1097,49 +763,41 @@ async function loadMarket(
             .fitContent();
 
 
-        if(candles.length){
+        if (candles.length) {
 
-            lastPrice =
+            currentPrice =
                 candles[
                     candles.length - 1
                 ].close;
 
-            updatePrice(
-                lastPrice
-            );
+            updatePrice();
 
         }
 
 
         websocket =
             new WebSocket(
-
                 `wss://stream.binance.com:9443/ws/${symbol.toLowerCase()}@kline_1m`
-
             );
 
 
         websocket.onmessage =
             event => {
 
-                const message =
+                const data =
                     JSON.parse(
                         event.data
                     );
 
 
                 const k =
-                    message.k;
+                    data.k;
 
 
-                if(!k){
-
-                    return;
-
-                }
+                if (!k) return;
 
 
-                series.update({
+                candleSeries.update({
 
                     time:
                         Math.floor(
@@ -1161,22 +819,18 @@ async function loadMarket(
                 });
 
 
-                lastPrice =
+                currentPrice =
                     Number(k.c);
 
-
-                updatePrice(
-                    lastPrice
-                );
+                updatePrice();
 
             };
 
     }
-    catch(error){
 
-        console.error(
-            error
-        );
+    catch (error) {
+
+        console.error(error);
 
         document.getElementById(
             "price"
@@ -1192,91 +846,61 @@ async function loadMarket(
    PRICE
 ===================================================== */
 
-function updatePrice(
-    price
-){
+function updatePrice() {
 
-    let value;
+    if (currentPrice === null) return;
 
+    let text;
 
-    if(price >= 1000){
+    if (currentPrice >= 1000) {
 
-        value =
+        text =
             "$" +
-            price.toLocaleString(
+            currentPrice.toLocaleString(
                 undefined,
                 {
-                    minimumFractionDigits:2,
-                    maximumFractionDigits:2
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
                 }
             );
 
     }
-    else if(price >= 1){
+    else if (currentPrice >= 1) {
 
-        value =
+        text =
             "$" +
-            price.toFixed(4);
+            currentPrice.toFixed(4);
 
     }
-    else{
+    else {
 
-        value =
+        text =
             "$" +
-            price.toFixed(8);
+            currentPrice.toFixed(8);
 
     }
 
 
     document.getElementById(
         "price"
-    ).textContent =
-        value;
+    ).textContent = text;
 
 }
 
 
 /* =====================================================
-   MARKET SELECT
+   AMOUNT
 ===================================================== */
 
 document
-    .getElementById(
-        "market"
-    )
+    .getElementById("amount")
     .addEventListener(
-
-        "change",
-
-        event => {
-
-            loadMarket(
-                event.target.value
-            );
-
-        }
-
-    );
-
-
-/* =====================================================
-   POTENTIAL RETURN
-===================================================== */
-
-document
-    .getElementById(
-        "amount"
-    )
-    .addEventListener(
-
         "input",
-
-        updatePotential
-
+        updatePayout
     );
 
 
-function updatePotential(){
+function updatePayout() {
 
     const amount =
         Number(
@@ -1292,33 +916,59 @@ function updatePotential(){
             : 1.8;
 
 
+    const potential =
+        amount * multiplier;
+
+
+    document.getElementById(
+        "amountDisplay"
+    ).textContent =
+        "$" + amount.toFixed(2);
+
+
+    document.getElementById(
+        "multiplier"
+    ).textContent =
+        multiplier + "×";
+
+
     document.getElementById(
         "potential"
     ).textContent =
-        "$" +
-        (
-            amount *
-            multiplier
-        ).toFixed(2);
+        "$" + potential.toFixed(2);
 
 }
 
 
-updatePotential();
+updatePayout();
 
 
 /* =====================================================
-   REQUEST TRADE
+   MARKET CHANGE
 ===================================================== */
 
-function requestTrade(
-    direction
-){
+document
+    .getElementById("market")
+    .addEventListener(
+        "change",
+        event => {
+            loadMarket(
+                event.target.value
+            );
+        }
+    );
 
-    if(currentTradeId){
+
+/* =====================================================
+   CONFIRM
+===================================================== */
+
+function openConfirm(direction) {
+
+    if (tradeId) {
 
         alert(
-            "You already have a demo trade in progress."
+            "A demo trade is already in progress."
         );
 
         return;
@@ -1334,10 +984,10 @@ function requestTrade(
         );
 
 
-    if(
+    if (
         !amount ||
         amount <= 0
-    ){
+    ) {
 
         alert(
             "Enter a valid demo amount."
@@ -1367,8 +1017,7 @@ function requestTrade(
     document.getElementById(
         "confirmAmount"
     ).textContent =
-        "$" +
-        amount.toFixed(2);
+        "$" + amount.toFixed(2);
 
 
     document.getElementById(
@@ -1379,7 +1028,7 @@ function requestTrade(
 }
 
 
-function closeConfirm(){
+function closeConfirm() {
 
     document.getElementById(
         "confirmModal"
@@ -1390,10 +1039,10 @@ function closeConfirm(){
 
 
 /* =====================================================
-   SUBMIT TRADE
+   SUBMIT
 ===================================================== */
 
-async function submitTrade(){
+async function submitTrade() {
 
     const amount =
         Number(
@@ -1403,19 +1052,15 @@ async function submitTrade(){
         );
 
 
-    try{
+    try {
 
         const response =
             await fetch(
-
                 "/api/trades",
-
                 {
+                    method: "POST",
 
-                    method:
-                        "POST",
-
-                    headers:{
+                    headers: {
                         "Content-Type":
                             "application/json"
                     },
@@ -1433,12 +1078,10 @@ async function submitTrade(){
                                 amount,
 
                             startPrice:
-                                lastPrice
+                                currentPrice
 
                         })
-
                 }
-
             );
 
 
@@ -1446,24 +1089,31 @@ async function submitTrade(){
             await response.json();
 
 
-        if(!response.ok){
+        if (!response.ok) {
 
             throw new Error(
+                data.details ||
                 data.error ||
-                "Unable to submit trade."
+                "Unable to create demo trade."
             );
 
         }
 
 
-        currentTradeId =
+        tradeId =
             data.trade.id;
 
 
         closeConfirm();
 
 
-        startApprovalWaiting(
+        document.getElementById(
+            "verifyModal"
+        ).style.display =
+            "flex";
+
+
+        startApprovalCountdown(
             data.trade
         );
 
@@ -1471,11 +1121,14 @@ async function submitTrade(){
         startPolling();
 
     }
-    catch(error){
+
+    catch (error) {
 
         alert(
             error.message
         );
+
+        console.error(error);
 
     }
 
@@ -1483,102 +1136,68 @@ async function submitTrade(){
 
 
 /* =====================================================
-   WAITING FOR ADMIN APPROVAL
+   APPROVAL COUNTDOWN
 ===================================================== */
 
-function startApprovalWaiting(
-    trade
-){
-
-    document.getElementById(
-        "verifyingModal"
-    ).style.display =
-        "flex";
-
-
-    updateApprovalCountdown(
-        trade
-    );
-
+function startApprovalCountdown(trade) {
 
     clearInterval(
         approvalTimer
     );
 
 
-    approvalTimer =
-        setInterval(
+    function update() {
 
-            () => {
-
-                updateApprovalCountdown(
-                    trade
-                );
-
-            },
-
-            1000
-
-        );
-
-}
+        const end =
+            new Date(
+                trade.approval_expires_at
+            ).getTime();
 
 
-function updateApprovalCountdown(
-    trade
-){
-
-    const expires =
-        new Date(
-            trade.approval_expires_at
-        ).getTime();
-
-
-    const remaining =
-        Math.max(
-
-            0,
-
-            Math.ceil(
-
-                (
-                    expires -
-                    Date.now()
-                ) / 1000
-
-            )
-
-        );
+        const remaining =
+            Math.max(
+                0,
+                Math.ceil(
+                    (end - Date.now()) / 1000
+                )
+            );
 
 
-    const minutes =
-        Math.floor(
-            remaining / 60
-        );
+        const minutes =
+            Math.floor(
+                remaining / 60
+            );
 
 
-    const seconds =
-        remaining % 60;
+        const seconds =
+            remaining % 60;
 
 
-    document.getElementById(
-        "approvalCountdown"
-    ).textContent =
-
-        `${minutes}:${String(
-            seconds
-        ).padStart(2,"0")}`;
+        document.getElementById(
+            "approvalCountdown"
+        ).textContent =
+            `${minutes}:${String(seconds).padStart(2, "0")}`;
 
 
-    if(
-        remaining <= 0
-    ){
+        if (remaining <= 0) {
 
-        clearInterval(
-            approvalTimer
-        );
+            clearInterval(
+                approvalTimer
+            );
+
+        }
 
     }
+
+
+    update();
+
+
+    approvalTimer =
+        setInterval(
+            update,
+            1000
+        );
 
 }
 
@@ -1587,20 +1206,17 @@ function updateApprovalCountdown(
    POLLING
 ===================================================== */
 
-function startPolling(){
+function startPolling() {
 
     clearInterval(
-        pollingTimer
+        pollTimer
     );
 
 
-    pollingTimer =
+    pollTimer =
         setInterval(
-
             checkTrade,
-
             1000
-
         );
 
 
@@ -1609,30 +1225,20 @@ function startPolling(){
 }
 
 
-async function checkTrade(){
+async function checkTrade() {
 
-    if(!currentTradeId){
-
-        return;
-
-    }
+    if (!tradeId) return;
 
 
-    try{
+    try {
 
         const response =
             await fetch(
-
-                `/api/trades/${currentTradeId}`
-
+                `/api/trades/${tradeId}`
             );
 
 
-        if(!response.ok){
-
-            return;
-
-        }
+        if (!response.ok) return;
 
 
         const data =
@@ -1643,41 +1249,33 @@ async function checkTrade(){
             data.trade;
 
 
-        /*
-         * PENDING APPROVAL
-         */
-
-        if(
+        if (
             trade.status ===
             "PENDING_APPROVAL"
-        ){
+        ) {
 
             return;
 
         }
 
 
-        /*
-         * ADMIN APPROVED
-         */
-
-        if(
+        if (
             trade.status ===
             "ACTIVE"
-        ){
+        ) {
+
+            document.getElementById(
+                "verifyModal"
+            ).style.display =
+                "none";
+
 
             clearInterval(
                 approvalTimer
             );
 
 
-            document.getElementById(
-                "verifyingModal"
-            ).style.display =
-                "none";
-
-
-            startActiveTimer(
+            startActiveTrade(
                 trade
             );
 
@@ -1687,39 +1285,26 @@ async function checkTrade(){
         }
 
 
-        /*
-         * DECLINED
-         */
-
-        if(
+        if (
             trade.status ===
             "DECLINED"
-        ){
+        ) {
 
-            finishPolling();
+            finish();
 
-
-            showDeclined(
-                trade
-            );
-
+            showDeclined();
 
             return;
 
         }
 
 
-        /*
-         * WIN / LOSS
-         */
-
-        if(
+        if (
             trade.status === "WIN" ||
             trade.status === "LOSS"
-        ){
+        ) {
 
-            finishPolling();
-
+            finish();
 
             showResult(
                 trade
@@ -1728,11 +1313,10 @@ async function checkTrade(){
         }
 
     }
-    catch(error){
 
-        console.error(
-            error
-        );
+    catch (error) {
+
+        console.error(error);
 
     }
 
@@ -1740,37 +1324,23 @@ async function checkTrade(){
 
 
 /* =====================================================
-   ACTIVE TRADE TIMER
+   ACTIVE TRADE
 ===================================================== */
 
-function startActiveTimer(
-    trade
-){
+function startActiveTrade(trade) {
 
-    let timer =
-        document.getElementById(
-            "activeTimer"
-        );
+    if (!activeTimerElement) {
 
-
-    if(!timer){
-
-        timer =
+        activeTimerElement =
             document.createElement(
                 "div"
             );
 
-
-        timer.id =
-            "activeTimer";
-
-
-        timer.className =
-            "trade-timer";
-
+        activeTimerElement.className =
+            "timer";
 
         document.body.appendChild(
-            timer
+            activeTimerElement
         );
 
     }
@@ -1781,132 +1351,116 @@ function startActiveTimer(
     );
 
 
+    async function update() {
+
+        try {
+
+            const response =
+                await fetch(
+                    `/api/trades/${trade.id}`
+                );
+
+
+            const data =
+                await response.json();
+
+
+            const latest =
+                data.trade;
+
+
+            if (
+                latest.status === "WIN" ||
+                latest.status === "LOSS"
+            ) {
+
+                finish();
+
+                showResult(
+                    latest
+                );
+
+                return;
+
+            }
+
+
+            const end =
+                new Date(
+                    latest.trade_expires_at
+                ).getTime();
+
+
+            const remaining =
+                Math.max(
+                    0,
+                    Math.ceil(
+                        (end - Date.now()) / 1000
+                    )
+                );
+
+
+            const minutes =
+                Math.floor(
+                    remaining / 60
+                );
+
+
+            const seconds =
+                remaining % 60;
+
+
+            activeTimerElement.innerHTML = `
+
+                DEMO TRADE ACTIVE
+
+                &nbsp; · &nbsp;
+
+                ${latest.market}
+
+                &nbsp; · &nbsp;
+
+                ${latest.direction}
+
+                &nbsp; · &nbsp;
+
+                <strong>
+                    ${minutes}:${String(seconds).padStart(2, "0")}
+                </strong>
+
+            `;
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+        }
+
+    }
+
+
+    update();
+
+
     activeTimer =
         setInterval(
-
-            async () => {
-
-                const response =
-                    await fetch(
-                        `/api/trades/${trade.id}`
-                    );
-
-
-                if(!response.ok){
-
-                    return;
-
-                }
-
-
-                const data =
-                    await response.json();
-
-
-                const latest =
-                    data.trade;
-
-
-                if(
-                    latest.status ===
-                    "WIN" ||
-                    latest.status ===
-                    "LOSS"
-                ){
-
-                    clearInterval(
-                        activeTimer
-                    );
-
-
-                    finishPolling();
-
-
-                    timer.remove();
-
-
-                    showResult(
-                        latest
-                    );
-
-
-                    return;
-
-                }
-
-
-                const expires =
-                    new Date(
-                        latest.trade_expires_at
-                    ).getTime();
-
-
-                const remaining =
-                    Math.max(
-
-                        0,
-
-                        Math.ceil(
-
-                            (
-                                expires -
-                                Date.now()
-                            ) / 1000
-
-                        )
-
-                    );
-
-
-                const min =
-                    Math.floor(
-                        remaining / 60
-                    );
-
-
-                const sec =
-                    remaining % 60;
-
-
-                timer.innerHTML = `
-
-                    <strong>
-                        DEMO TRADE ACTIVE
-                    </strong>
-
-                    &nbsp; · &nbsp;
-
-                    ${latest.market}
-
-                    &nbsp; · &nbsp;
-
-                    ${latest.direction}
-
-                    &nbsp; · &nbsp;
-
-                    <span class="timer-number">
-                        ${min}:${String(sec).padStart(2,"0")}
-                    </span>
-
-                `;
-
-            },
-
+            update,
             1000
-
         );
 
 }
 
 
 /* =====================================================
-   FINISH POLLING
+   FINISH
 ===================================================== */
 
-function finishPolling(){
+function finish() {
 
     clearInterval(
-        pollingTimer
+        pollTimer
     );
 
     clearInterval(
@@ -1918,25 +1472,17 @@ function finishPolling(){
     );
 
 
-    pollingTimer =
-        null;
-
-    approvalTimer =
-        null;
-
-    activeTimer =
-        null;
+    pollTimer = null;
+    approvalTimer = null;
+    activeTimer = null;
 
 
-    const timer =
-        document.getElementById(
-            "activeTimer"
-        );
+    if (activeTimerElement) {
 
+        activeTimerElement.remove();
 
-    if(timer){
-
-        timer.remove();
+        activeTimerElement =
+            null;
 
     }
 
@@ -1947,12 +1493,10 @@ function finishPolling(){
    DECLINED
 ===================================================== */
 
-function showDeclined(
-    trade
-){
+function showDeclined() {
 
     document.getElementById(
-        "verifyingModal"
+        "verifyModal"
     ).style.display =
         "none";
 
@@ -1982,87 +1526,31 @@ function showDeclined(
                 DECLINED
             </div>
 
+            <div class="result-text">
 
-            <div class="result-description">
-
-                Your demo trade request was not
-                approved within the verification window.
+                This demo trade was not approved
+                within the 60-second verification
+                window.
 
             </div>
-
 
             <div class="summary">
 
                 <div class="summary-row">
-
-                    <span>
-                        Market
-                    </span>
-
-                    <strong>
-                        ${trade.market}
-                    </strong>
-
-                </div>
-
-
-                <div class="summary-row">
-
-                    <span>
-                        Direction
-                    </span>
-
-                    <strong>
-                        ${trade.direction}
-                    </strong>
-
-                </div>
-
-
-                <div class="summary-row">
-
-                    <span>
-                        Status
-                    </span>
-
-                    <strong
-                        style="color:#ff5c70"
-                    >
+                    <span>Status</span>
+                    <strong style="color:#ff5c70">
                         DECLINED
                     </strong>
-
                 </div>
 
-
                 <div class="summary-row">
-
-                    <span>
-                        Reason
-                    </span>
-
+                    <span>Reason</span>
                     <strong>
                         Verification timeout
                     </strong>
-
                 </div>
 
             </div>
-
-
-            <p style="
-                margin-top:14px;
-                color:#596579;
-                font-size:9px;
-                line-height:1.5;
-                text-align:center;
-            ">
-
-                DEMO ONLY.
-                No money or cryptocurrency was
-                transferred.
-
-            </p>
-
 
             <button
                 class="primary"
@@ -2081,8 +1569,7 @@ function showDeclined(
     );
 
 
-    currentTradeId =
-        null;
+    tradeId = null;
 
 }
 
@@ -2091,13 +1578,10 @@ function showDeclined(
    RESULT
 ===================================================== */
 
-function showResult(
-    trade
-){
+function showResult(trade) {
 
     const win =
-        trade.status ===
-        "WIN";
+        trade.status === "WIN";
 
 
     const color =
@@ -2120,24 +1604,6 @@ function showResult(
         "flex";
 
 
-    const amount =
-        Number(
-            trade.amount
-        );
-
-
-    const totalReturn =
-        Number(
-            trade.demo_return || 0
-        );
-
-
-    const profit =
-        Number(
-            trade.demo_profit || 0
-        );
-
-
     modal.innerHTML = `
 
         <div class="modal-box">
@@ -2146,15 +1612,13 @@ function showResult(
                 class="result-title"
                 style="color:${color}"
             >
-
-                ${win ? "WIN" : "LOSS"}
-
+                ${trade.status}
             </div>
 
+            <div class="result-text">
 
-            <div class="result-description">
-
-                Your 60-second demo trade has finished.
+                Your simulated demo trade has
+                finished.
 
             </div>
 
@@ -2162,102 +1626,47 @@ function showResult(
             <div class="summary">
 
                 <div class="summary-row">
-
-                    <span>
-                        Market
-                    </span>
-
+                    <span>Market</span>
                     <strong>
                         ${trade.market}
                     </strong>
-
                 </div>
 
-
                 <div class="summary-row">
-
-                    <span>
-                        Direction
-                    </span>
-
+                    <span>Direction</span>
                     <strong>
                         ${trade.direction}
                     </strong>
-
                 </div>
 
-
                 <div class="summary-row">
-
-                    <span>
-                        Demo amount
-                    </span>
-
+                    <span>Demo Amount</span>
                     <strong>
-                        $${amount.toFixed(2)}
+                        $${Number(
+                            trade.amount
+                        ).toFixed(2)}
                     </strong>
-
                 </div>
 
-
                 <div class="summary-row">
-
-                    <span>
-                        Demo return
-                    </span>
-
-                    <strong
-                        style="color:${color}"
-                    >
-                        $${totalReturn.toFixed(2)}
+                    <span>Demo Return</span>
+                    <strong style="color:${color}">
+                        $${Number(
+                            trade.demo_return || 0
+                        ).toFixed(2)}
                     </strong>
-
                 </div>
 
-
                 <div class="summary-row">
-
-                    <span>
-                        Demo profit
-                    </span>
-
-                    <strong
-                        style="color:${color}"
-                    >
-                        $${profit.toFixed(2)}
+                    <span>Demo Profit</span>
+                    <strong style="color:${color}">
+                        $${Number(
+                            trade.demo_profit || 0
+                        ).toFixed(2)}
                     </strong>
-
-                </div>
-
-
-                <div class="summary-row">
-
-                    <span>
-                        Resolution
-                    </span>
-
-                    <strong>
-                        ${trade.resolution_source}
-                    </strong>
-
                 </div>
 
             </div>
-
-
-            <p style="
-                margin-top:14px;
-                color:#596579;
-                font-size:9px;
-                line-height:1.5;
-                text-align:center;
-            ">
-
-                DEMO ONLY.
-                This result is simulated and does not
-                represent real-money trading.
-
-            </p>
 
 
             <button
@@ -2277,43 +1686,17 @@ function showResult(
     );
 
 
-    currentTradeId =
-        null;
+    tradeId = null;
 
 }
 
 
 /* =====================================================
-   START
+   START MARKET
 ===================================================== */
 
 loadMarket(
     "ETHUSDT"
-);
-
-
-/* =====================================================
-   RESIZE
-===================================================== */
-
-window.addEventListener(
-
-    "resize",
-
-    () => {
-
-        chart.applyOptions({
-
-            width:
-                chartElement.clientWidth,
-
-            height:
-                chartElement.clientHeight
-
-        });
-
-    }
-
 );
 
 </script>
