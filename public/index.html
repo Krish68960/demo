@@ -1,1 +1,1682 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>
+    NovaTrade Demo
+</title>
+
+<script src="https://unpkg.com/lightweight-charts@5.2.0/dist/lightweight-charts.standalone.production.js"></script>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#080b12;
+    color:#e8edf5;
+}
+
+.header{
+    height:70px;
+    background:#0b0f17;
+    border-bottom:1px solid #1c2431;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 25px;
+}
+
+.logo{
+    font-size:23px;
+    font-weight:bold;
+}
+
+.logo span{
+    color:#4f8cff;
+}
+
+.live{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    color:#8a96a8;
+    font-size:11px;
+}
+
+.dot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:#2dd4a8;
+}
+
+.hero{
+    padding:15px 25px;
+    border-bottom:1px solid #1c2431;
+    background:#0b0f17;
+}
+
+.hero h2{
+    font-size:17px;
+}
+
+.hero p{
+    color:#687386;
+    font-size:11px;
+    margin-top:5px;
+}
+
+.demo{
+    display:inline-block;
+    margin-top:7px;
+    padding:4px 8px;
+    border-radius:10px;
+    background:#332b12;
+    color:#f0c75e;
+    font-size:9px;
+}
+
+.main{
+    display:flex;
+    height:calc(100vh - 116px);
+}
+
+.chart-area{
+    flex:1;
+    min-width:0;
+}
+
+.market{
+    height:65px;
+    border-bottom:1px solid #1c2431;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 20px;
+}
+
+.asset{
+    display:flex;
+    gap:10px;
+    align-items:center;
+}
+
+.icon{
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    background:#182238;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-weight:bold;
+}
+
+.asset-name{
+    font-size:14px;
+    font-weight:bold;
+}
+
+.asset-symbol{
+    color:#687386;
+    font-size:10px;
+    margin-top:3px;
+}
+
+.price{
+    font-size:17px;
+    font-weight:bold;
+}
+
+.change{
+    font-size:10px;
+    margin-left:7px;
+}
+
+.chart{
+    height:calc(100% - 65px);
+}
+
+.trade{
+    width:330px;
+    border-left:1px solid #1c2431;
+    background:#0d111a;
+    padding:20px;
+}
+
+.trade h3{
+    font-size:16px;
+}
+
+.description{
+    color:#687386;
+    font-size:10px;
+    line-height:1.5;
+    margin:7px 0 20px;
+}
+
+label{
+    display:block;
+    color:#738095;
+    font-size:10px;
+    margin-bottom:7px;
+}
+
+select,
+input{
+    width:100%;
+    padding:12px;
+    background:#121925;
+    color:white;
+    border:1px solid #293446;
+    border-radius:7px;
+    outline:none;
+}
+
+.field{
+    margin-bottom:15px;
+}
+
+.payout{
+    border:1px solid #202b3b;
+    background:#101620;
+    border-radius:7px;
+    padding:12px;
+    margin-bottom:15px;
+}
+
+.row{
+    display:flex;
+    justify-content:space-between;
+    font-size:11px;
+    padding:4px 0;
+}
+
+.muted{
+    color:#687386;
+}
+
+.green{
+    color:#2dd4a8;
+}
+
+.buttons{
+    display:flex;
+    gap:8px;
+}
+
+.buttons button{
+    flex:1;
+    border:0;
+    padding:14px;
+    border-radius:7px;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.call{
+    background:#159979;
+}
+
+.put{
+    background:#d94d64;
+}
+
+.notice{
+    margin-top:15px;
+    padding:12px;
+    background:#0a0f17;
+    border:1px solid #202b3b;
+    border-radius:7px;
+    color:#687386;
+    font-size:9px;
+    line-height:1.5;
+}
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.82);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:100;
+}
+
+.modal-box{
+    width:430px;
+    max-width:92%;
+    background:#101620;
+    border:1px solid #293446;
+    border-radius:13px;
+    padding:25px;
+}
+
+.modal-box h2{
+    font-size:20px;
+    margin-bottom:7px;
+}
+
+.warning{
+    color:#7f8b9e;
+    font-size:11px;
+    line-height:1.5;
+}
+
+.summary{
+    background:#0b1018;
+    border:1px solid #202b3b;
+    border-radius:7px;
+    padding:12px;
+    margin-top:15px;
+}
+
+.summary div{
+    display:flex;
+    justify-content:space-between;
+    padding:6px 0;
+    font-size:11px;
+}
+
+.summary span{
+    color:#687386;
+}
+
+.start{
+    width:100%;
+    margin-top:15px;
+    padding:13px;
+    border:0;
+    border-radius:7px;
+    background:#4f8cff;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.cancel{
+    width:100%;
+    margin-top:7px;
+    padding:11px;
+    border:0;
+    border-radius:7px;
+    background:#1b2432;
+    color:white;
+    cursor:pointer;
+}
+
+.timer{
+    position:fixed;
+    top:82px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:200;
+    background:#101620;
+    border:1px solid #293446;
+    padding:12px 20px;
+    border-radius:9px;
+    box-shadow:0 15px 50px #000;
+}
+
+@media(max-width:800px){
+
+    .main{
+        display:block;
+        height:auto;
+    }
+
+    .chart-area{
+        height:550px;
+    }
+
+    .trade{
+        width:100%;
+        border-left:0;
+        border-top:1px solid #1c2431;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header class="header">
+
+    <div class="logo">
+        Nova<span>Trade</span>
+    </div>
+
+    <div class="live">
+        <span class="dot"></span>
+        LIVE MARKET
+    </div>
+
+</header>
+
+
+<section class="hero">
+
+    <h2>
+        Open Demo Trading Platform
+    </h2>
+
+    <p>
+        Live public crypto market data · No account required · No deposit required
+    </p>
+
+    <span class="demo">
+        DEMO / NO REAL MONEY
+    </span>
+
+</section>
+
+
+<div class="main">
+
+
+<section class="chart-area">
+
+    <div class="market">
+
+        <div class="asset">
+
+            <div
+                class="icon"
+                id="icon"
+            >
+                Ξ
+            </div>
+
+            <div>
+
+                <div
+                    class="asset-name"
+                    id="assetName"
+                >
+                    Ethereum / USDT
+                </div>
+
+                <div
+                    class="asset-symbol"
+                    id="assetSymbol"
+                >
+                    ETHUSDT
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div>
+
+            <span
+                class="price"
+                id="price"
+            >
+                Loading...
+            </span>
+
+            <span
+                class="change"
+                id="change"
+            >
+                --
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div
+        class="chart"
+        id="chart"
+    ></div>
+
+</section>
+
+
+<aside class="trade">
+
+    <h3>
+        Demo Trade
+    </h3>
+
+    <p class="description">
+
+        Select a market and choose CALL or PUT.
+        Every position lasts 60 seconds.
+
+    </p>
+
+
+    <div class="field">
+
+        <label>
+            MARKET
+        </label>
+
+        <select id="market">
+
+            <option value="ETHUSDT">
+                ETH / USDT
+            </option>
+
+            <option value="SOLUSDT">
+                SOL / USDT
+            </option>
+
+            <option value="POLUSDT">
+                POL / USDT
+            </option>
+
+            <option value="TRXUSDT">
+                TRX / USDT
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div class="field">
+
+        <label>
+            DEMO AMOUNT
+        </label>
+
+        <input
+            type="number"
+            id="amount"
+            value="100"
+            min="1"
+        >
+
+    </div>
+
+
+    <div class="payout">
+
+        <div class="row">
+
+            <span class="muted">
+                Below $500
+            </span>
+
+            <strong class="green">
+                1.8×
+            </strong>
+
+        </div>
+
+
+        <div class="row">
+
+            <span class="muted">
+                $500+
+            </span>
+
+            <strong class="green">
+                3×
+            </strong>
+
+        </div>
+
+
+        <div class="row">
+
+            <span class="muted">
+                Potential return
+            </span>
+
+            <strong
+                class="green"
+                id="potential"
+            >
+                $180.00
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <div class="buttons">
+
+        <button
+            class="call"
+            onclick="requestTrade('CALL')"
+        >
+            ▲ CALL
+        </button>
+
+        <button
+            class="put"
+            onclick="requestTrade('PUT')"
+        >
+            ▼ PUT
+        </button>
+
+    </div>
+
+
+    <div class="notice">
+
+        <strong>
+            Demo only
+        </strong>
+
+        <br><br>
+
+        No cryptocurrency is deposited,
+        transferred or withdrawn.
+
+        <br><br>
+
+        Trade outcomes are controlled by
+        the demo backend/admin or automatically
+        resolved after 60 seconds.
+
+    </div>
+
+</aside>
+
+</div>
+
+
+<!-- TRADE MODAL -->
+
+<div
+    class="modal"
+    id="tradeModal"
+>
+
+    <div class="modal-box">
+
+        <h2>
+            Confirm Demo Trade
+        </h2>
+
+        <p class="warning">
+
+            This is a simulated trade.
+            No payment is required.
+
+        </p>
+
+
+        <div class="summary">
+
+            <div>
+                <span>Market</span>
+                <strong id="modalMarket">
+                    ETHUSDT
+                </strong>
+            </div>
+
+            <div>
+                <span>Direction</span>
+                <strong id="modalDirection">
+                    CALL
+                </strong>
+            </div>
+
+            <div>
+                <span>Amount</span>
+                <strong id="modalAmount">
+                    $100.00
+                </strong>
+            </div>
+
+        </div>
+
+
+        <button
+            class="start"
+            onclick="createTrade()"
+        >
+            Place Demo Trade
+        </button>
+
+
+        <button
+            class="cancel"
+            onclick="closeModal()"
+        >
+            Cancel
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const coins = {
+
+    ETHUSDT:{
+        name:"Ethereum / USDT",
+        icon:"Ξ"
+    },
+
+    SOLUSDT:{
+        name:"Solana / USDT",
+        icon:"S"
+    },
+
+    POLUSDT:{
+        name:"Polygon / USDT",
+        icon:"P"
+    },
+
+    TRXUSDT:{
+        name:"TRON / USDT",
+        icon:"T"
+    }
+
+};
+
+
+let currentMarket =
+    "ETHUSDT";
+
+let websocket =
+    null;
+
+let lastPrice =
+    null;
+
+let selectedDirection =
+    null;
+
+let currentTradeId =
+    null;
+
+let pollingTimer =
+    null;
+
+
+/* ================= CHART ================= */
+
+const chartElement =
+    document.getElementById(
+        "chart"
+    );
+
+
+const chart =
+    LightweightCharts.createChart(
+        chartElement,
+        {
+
+            layout:{
+                background:{
+                    type:"solid",
+                    color:"#080b12"
+                },
+                textColor:"#778397"
+            },
+
+            grid:{
+                vertLines:{
+                    color:"#121925"
+                },
+                horzLines:{
+                    color:"#121925"
+                }
+            },
+
+            rightPriceScale:{
+                borderColor:"#1c2431"
+            },
+
+            timeScale:{
+                borderColor:"#1c2431",
+                timeVisible:true,
+                secondsVisible:false
+            }
+
+        }
+    );
+
+
+const series =
+    chart.addSeries(
+        LightweightCharts.CandlestickSeries,
+        {
+            upColor:"#26a69a",
+            downColor:"#ef5350",
+            borderVisible:false,
+            wickUpColor:"#26a69a",
+            wickDownColor:"#ef5350"
+        }
+    );
+
+
+/* ================= MARKET DATA ================= */
+
+async function loadMarket(
+    symbol
+){
+
+    currentMarket =
+        symbol;
+
+
+    const coin =
+        coins[symbol];
+
+
+    document.getElementById(
+        "assetName"
+    ).textContent =
+        coin.name;
+
+
+    document.getElementById(
+        "assetSymbol"
+    ).textContent =
+        symbol;
+
+
+    document.getElementById(
+        "icon"
+    ).textContent =
+        coin.icon;
+
+
+    if(websocket){
+
+        websocket.close();
+
+    }
+
+
+    try{
+
+        const response =
+            await fetch(
+                `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=1m&limit=300`
+            );
+
+
+        if(!response.ok){
+
+            throw new Error(
+                "Market unavailable"
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        const candles =
+            data.map(
+                x => ({
+
+                    time:
+                        Math.floor(
+                            x[0] / 1000
+                        ),
+
+                    open:
+                        Number(x[1]),
+
+                    high:
+                        Number(x[2]),
+
+                    low:
+                        Number(x[3]),
+
+                    close:
+                        Number(x[4])
+
+                })
+            );
+
+
+        series.setData(
+            candles
+        );
+
+
+        chart.timeScale()
+            .fitContent();
+
+
+        if(candles.length){
+
+            lastPrice =
+                candles[
+                    candles.length - 1
+                ].close;
+
+            updatePrice(
+                lastPrice
+            );
+
+        }
+
+
+        websocket =
+            new WebSocket(
+                `wss://stream.binance.com:9443/ws/${symbol.toLowerCase()}@kline_1m`
+            );
+
+
+        websocket.onmessage =
+            event => {
+
+                const data =
+                    JSON.parse(
+                        event.data
+                    );
+
+
+                const k =
+                    data.k;
+
+
+                if(!k){
+
+                    return;
+
+                }
+
+
+                series.update({
+
+                    time:
+                        Math.floor(
+                            k.t / 1000
+                        ),
+
+                    open:
+                        Number(k.o),
+
+                    high:
+                        Number(k.h),
+
+                    low:
+                        Number(k.l),
+
+                    close:
+                        Number(k.c)
+
+                });
+
+
+                lastPrice =
+                    Number(k.c);
+
+
+                updatePrice(
+                    lastPrice
+                );
+
+            };
+
+    }
+    catch(error){
+
+        console.error(
+            error
+        );
+
+        document.getElementById(
+            "price"
+        ).textContent =
+            "Unavailable";
+
+    }
+
+}
+
+
+function updatePrice(
+    price
+){
+
+    let text;
+
+
+    if(price >= 1000){
+
+        text =
+            "$" +
+            price.toLocaleString(
+                undefined,
+                {
+                    minimumFractionDigits:2,
+                    maximumFractionDigits:2
+                }
+            );
+
+    }
+    else if(price >= 1){
+
+        text =
+            "$" +
+            price.toFixed(4);
+
+    }
+    else{
+
+        text =
+            "$" +
+            price.toFixed(8);
+
+    }
+
+
+    document.getElementById(
+        "price"
+    ).textContent =
+        text;
+
+}
+
+
+/* ================= SELECT ================= */
+
+document
+    .getElementById("market")
+    .addEventListener(
+        "change",
+        event => {
+
+            loadMarket(
+                event.target.value
+            );
+
+        }
+    );
+
+
+/* ================= AMOUNT ================= */
+
+document
+    .getElementById("amount")
+    .addEventListener(
+        "input",
+        updatePotential
+    );
+
+
+function updatePotential(){
+
+    const amount =
+        Number(
+            document.getElementById(
+                "amount"
+            ).value
+        ) || 0;
+
+
+    const multiplier =
+        amount >= 500
+            ? 3
+            : 1.8;
+
+
+    document.getElementById(
+        "potential"
+    ).textContent =
+        "$" +
+        (
+            amount *
+            multiplier
+        ).toFixed(2);
+
+}
+
+
+/* ================= REQUEST TRADE ================= */
+
+function requestTrade(
+    direction
+){
+
+    const amount =
+        Number(
+            document.getElementById(
+                "amount"
+            ).value
+        );
+
+
+    if(
+        !amount ||
+        amount <= 0
+    ){
+
+        alert(
+            "Enter a valid demo amount."
+        );
+
+        return;
+
+    }
+
+
+    if(currentTradeId){
+
+        alert(
+            "A demo trade is already active."
+        );
+
+        return;
+
+    }
+
+
+    selectedDirection =
+        direction;
+
+
+    document.getElementById(
+        "modalMarket"
+    ).textContent =
+        currentMarket;
+
+
+    document.getElementById(
+        "modalDirection"
+    ).textContent =
+        direction;
+
+
+    document.getElementById(
+        "modalAmount"
+    ).textContent =
+        "$" +
+        amount.toFixed(2);
+
+
+    document.getElementById(
+        "tradeModal"
+    ).style.display =
+        "flex";
+
+}
+
+
+function closeModal(){
+
+    document.getElementById(
+        "tradeModal"
+    ).style.display =
+        "none";
+
+}
+
+
+/* ================= CREATE TRADE ================= */
+
+async function createTrade(){
+
+    const amount =
+        Number(
+            document.getElementById(
+                "amount"
+            ).value
+        );
+
+
+    try{
+
+        const response =
+            await fetch(
+                "/api/trades",
+                {
+
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:JSON.stringify({
+
+                        market:
+                            currentMarket,
+
+                        direction:
+                            selectedDirection,
+
+                        amount:
+                            amount,
+
+                        startPrice:
+                            lastPrice
+
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            throw new Error(
+                data.error ||
+                "Unable to create trade."
+            );
+
+        }
+
+
+        currentTradeId =
+            data.trade.id;
+
+
+        closeModal();
+
+
+        showTimer(
+            data.trade
+        );
+
+
+        startPolling();
+
+    }
+    catch(error){
+
+        alert(
+            error.message
+        );
+
+    }
+
+}
+
+
+/* ================= TIMER ================= */
+
+function showTimer(
+    trade
+){
+
+    let timer =
+        document.getElementById(
+            "demoTimer"
+        );
+
+
+    if(!timer){
+
+        timer =
+            document.createElement(
+                "div"
+            );
+
+
+        timer.id =
+            "demoTimer";
+
+
+        timer.className =
+            "timer";
+
+
+        document.body.appendChild(
+            timer
+        );
+
+    }
+
+
+    updateTimer(
+        trade
+    );
+
+}
+
+
+function updateTimer(
+    trade
+){
+
+    const timer =
+        document.getElementById(
+            "demoTimer"
+        );
+
+
+    if(!timer){
+
+        return;
+
+    }
+
+
+    const expires =
+        new Date(
+            trade.expires_at
+        ).getTime();
+
+
+    const remaining =
+        Math.max(
+            0,
+            Math.ceil(
+                (
+                    expires -
+                    Date.now()
+                ) / 1000
+            )
+        );
+
+
+    const min =
+        Math.floor(
+            remaining / 60
+        );
+
+
+    const sec =
+        remaining % 60;
+
+
+    timer.innerHTML = `
+
+        <strong>
+            DEMO TRADE
+        </strong>
+
+        &nbsp; · &nbsp;
+
+        ${trade.market}
+
+        &nbsp; · &nbsp;
+
+        ${trade.direction}
+
+        &nbsp; · &nbsp;
+
+        <strong>
+            ${min}:${String(sec).padStart(2,"0")}
+        </strong>
+
+    `;
+
+}
+
+
+/* ================= POLL RESULT ================= */
+
+function startPolling(){
+
+    clearInterval(
+        pollingTimer
+    );
+
+
+    pollingTimer =
+        setInterval(
+            checkTrade,
+            1000
+        );
+
+
+    checkTrade();
+
+}
+
+
+async function checkTrade(){
+
+    if(!currentTradeId){
+
+        return;
+
+    }
+
+
+    try{
+
+        const response =
+            await fetch(
+                `/api/trades/${currentTradeId}`
+            );
+
+
+        if(!response.ok){
+
+            return;
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        const trade =
+            data.trade;
+
+
+        updateTimer(
+            trade
+        );
+
+
+        if(
+            trade.status !== "PENDING"
+        ){
+
+            clearInterval(
+                pollingTimer
+            );
+
+
+            showResult(
+                trade
+            );
+
+
+            currentTradeId =
+                null;
+
+        }
+
+    }
+    catch(error){
+
+        console.error(
+            error
+        );
+
+    }
+
+}
+
+
+/* ================= RESULT ================= */
+
+function showResult(
+    trade
+){
+
+    const existing =
+        document.getElementById(
+            "resultModal"
+        );
+
+
+    if(existing){
+
+        existing.remove();
+
+    }
+
+
+    const win =
+        trade.status === "WIN";
+
+
+    const resultColor =
+        win
+            ? "#2dd4a8"
+            : "#ff5c70";
+
+
+    const modal =
+        document.createElement(
+            "div"
+        );
+
+
+    modal.id =
+        "resultModal";
+
+
+    modal.className =
+        "modal";
+
+
+    modal.style.display =
+        "flex";
+
+
+    const amount =
+        Number(
+            trade.amount
+        );
+
+
+    const totalReturn =
+        Number(
+            trade.demo_return || 0
+        );
+
+
+    const profit =
+        Number(
+            trade.demo_profit || 0
+        );
+
+
+    modal.innerHTML = `
+
+        <div class="modal-box"
+             style="text-align:center">
+
+            <div style="
+                font-size:30px;
+                font-weight:900;
+                color:${resultColor};
+                margin-bottom:10px;
+            ">
+
+                ${win ? "WIN" : "LOSS"}
+
+            </div>
+
+
+            <p class="warning">
+
+                Demo trade completed.
+
+            </p>
+
+
+            <div class="summary"
+                 style="text-align:left">
+
+                <div>
+
+                    <span>
+                        Market
+                    </span>
+
+                    <strong>
+                        ${trade.market}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Direction
+                    </span>
+
+                    <strong>
+                        ${trade.direction}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Demo amount
+                    </span>
+
+                    <strong>
+                        $${amount.toFixed(2)}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Demo return
+                    </span>
+
+                    <strong style="
+                        color:${resultColor}
+                    ">
+
+                        $${totalReturn.toFixed(2)}
+
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Demo profit
+                    </span>
+
+                    <strong style="
+                        color:${resultColor}
+                    ">
+
+                        $${profit.toFixed(2)}
+
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Resolution
+                    </span>
+
+                    <strong>
+                        ${trade.resolution_source}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <p style="
+                color:#596579;
+                font-size:9px;
+                line-height:1.5;
+                margin-top:13px;
+            ">
+
+                DEMO ONLY.
+                No cryptocurrency was transferred
+                and no real-money trade occurred.
+
+            </p>
+
+
+            <button
+                class="start"
+                onclick="document.getElementById('resultModal').remove()"
+            >
+                Continue
+            </button>
+
+        </div>
+
+    `;
+
+
+    document.body.appendChild(
+        modal
+    );
+
+
+    const timer =
+        document.getElementById(
+            "demoTimer"
+        );
+
+
+    if(timer){
+
+        timer.remove();
+
+    }
+
+}
+
+
+/* ================= START ================= */
+
+updatePotential();
+
+loadMarket(
+    "ETHUSDT"
+);
+
+
+/* ================= RESIZE ================= */
+
+window.addEventListener(
+    "resize",
+    () => {
+
+        chart.applyOptions({
+            width:
+                chartElement.clientWidth,
+
+            height:
+                chartElement.clientHeight
+
+        });
+
+    }
+);
+
+</script>
+
+</body>
+</html>
