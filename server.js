@@ -91,9 +91,16 @@ const ALLOWED_DIRECTIONS = [
 
 async function initializeDatabase() {
 
-    await pool.query(`
+    // DEMO DATABASE RESET
+    // This deletes old demo trades so the new schema
+    // can be created cleanly.
 
-        CREATE TABLE IF NOT EXISTS trades (
+    await pool.query(`
+        DROP TABLE IF EXISTS trades;
+    `);
+
+    await pool.query(`
+        CREATE TABLE trades (
 
             id UUID PRIMARY KEY,
 
@@ -128,10 +135,22 @@ async function initializeDatabase() {
                 DEFAULT 0
 
         );
-
     `);
 
+    await pool.query(`
+        CREATE INDEX trades_status_idx
+        ON trades(status);
+    `);
 
+    await pool.query(`
+        CREATE INDEX trades_created_at_idx
+        ON trades(created_at DESC);
+    `);
+
+    console.log(
+        "Fresh NovaTrade demo database initialized."
+    );
+}
     /*
      * If the table already existed from your
      * previous version, add the new columns.
